@@ -6,6 +6,9 @@
     "start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
+    "babel-plugin-syntax-decorators": "^6.8.0",
+    "babel-preset-react-native": "^1.7.0",
+    "pure-render-decorator": "^1.1.1",
     "react": "^0.14.8",
     "react-native": "^0.25.1"
   }
