@@ -3,6 +3,7 @@
     "react-native"
   ],
   "plugins": [
-    "syntax-decorators"
+    "syntax-decorators",
+    "lodash"
   ]
 }
