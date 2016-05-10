@@ -15,18 +15,20 @@ export default function reduceRecipes(state = EMPTY_STORE, action) {
         recipesById: { $merge: action.payload }
       });
 
-    case ActionType.SAVE_RECIPE:
+    case ActionType.SAVE_RECIPE: {
       const { recipeId } = action.payload;
       return update(state, {
         customRecipeIds: { $push: recipeId },
         recipesById: { $merge: { [recipeId]: action.payload } }
       });
+    }
 
-    case ActionType.DELETE_RECIPE:
+    case ActionType.DELETE_RECIPE: {
       const recipeId = action.payload;
       return update(state, {
         customRecipeIds: { $without: recipeId }
       });
+    }
 
     default:
       return state;

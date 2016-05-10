@@ -13,6 +13,9 @@ import {
 } from 'react-native';
 
 import App from './js/App';
+import { initializeStore } from './js/store';
+
+initializeStore();
 
 class spiritguide extends Component {
   render() {

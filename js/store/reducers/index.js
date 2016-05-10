@@ -7,7 +7,7 @@ import recipes from './recipes';
 
 update.extend('$without', (item, array) => _.without(array, item));
 
-export {
+export default {
   app,
   filters,
   recipes
