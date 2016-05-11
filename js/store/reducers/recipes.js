@@ -3,9 +3,7 @@ import update from 'immutability-helper';
 import ActionType from '../ActionType';
 
 const EMPTY_STORE = {
-  recipesById: {},
-  customRecipeIds: [],
-  defaultRecipeIds: []
+  recipesById: {}
 };
 
 export default function reduceRecipes(state = EMPTY_STORE, action) {
@@ -18,7 +16,6 @@ export default function reduceRecipes(state = EMPTY_STORE, action) {
     case ActionType.SAVE_RECIPE: {
       const { recipeId } = action.payload;
       return update(state, {
-        customRecipeIds: { $push: recipeId },
         recipesById: { $merge: { [recipeId]: action.payload } }
       });
     }
@@ -26,7 +23,7 @@ export default function reduceRecipes(state = EMPTY_STORE, action) {
     case ActionType.DELETE_RECIPE: {
       const recipeId = action.payload;
       return update(state, {
-        customRecipeIds: { $without: recipeId }
+        recipesById: { $omit: recipeId }
       });
     }
 
