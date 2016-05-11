@@ -10,6 +10,7 @@
     "babel-plugin-syntax-decorators": "^6.8.0",
     "babel-preset-react-native": "^1.7.0",
     "bluebird": "^3.3.5",
+    "events": "^1.1.0",
     "immutability-helper": "^2.0.0",
     "lodash": "^4.12.0",
     "loglevel": "^1.4.0",
