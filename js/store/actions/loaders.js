@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-
-import { BASE_URL } from '../../definitions';
+import { bulkLoad } from '../../db/recipes';
 
 export function loadRecipes(recipeIds) {
   return (dispatch, getState) => {
@@ -9,11 +8,12 @@ export function loadRecipes(recipeIds) {
 
     const recipeIdsToLoad = _.keys(recipesById).filter(recipeId => !recipesById[recipeId]);
 
-    // if (recipeIdsToLoad.length) {
-      return Promise.resolve(fetch(BASE_URL + '/recipes/bulk'))
+    if (recipeIdsToLoad.length) {
+      // return Promise.resolve(fetch('http://localhost:5984/recipes/bulk'))
+      return bulkLoad(recipeIdsToLoad)
       .then(console.log.bind(console));
-    // } else {
-    //   return Promise.resolve();
-    // }
+    } else {
+      return Promise.resolve();
+    }
   };
 }
