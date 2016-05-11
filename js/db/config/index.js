@@ -4,17 +4,17 @@ let config;
 switch (process.env.NODE_ENV) {
   case 'production':
     log.info('loading config from config-production.json');
-    config = require(`${__dirname}/config-production.json`);
+    config = require('./config-production.json');
     break;
 
   case 'staging':
     log.info('loading config from config-staging.json');
-    config = require(`${__dirname}/config-staging.json`);
+    config = require('./config-staging.json');
     break;
 
   default:
     log.info('loading config from config-development.json');
-    config = require(`${__dirname}/config-development.json`);
+    config = require('./config-development.json');
     break;
 }
 
