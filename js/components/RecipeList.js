@@ -1,11 +1,7 @@
 import React from 'react';
-import ReactNative from 'react-native';
+import { ListView, Text } from 'react-native';
 import PureRender from 'pure-render-decorator';
-
-const {
-  ListView,
-  Text
-} = ReactNative;
+import memoize from 'memoizee';
 
 import { recipe } from './propTypes';
 
@@ -15,16 +11,15 @@ export default class RecipeList extends React.Component {
     recipes: React.PropTypes.arrayOf(recipe).isRequired
   };
 
-  state = {
-    dataSource: new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2
-    }).cloneWithRows(this.props.recipes),
-  };
+  constructor() {
+    super();
+    this._getDataSource = memoize(this._getDataSource, { max: 1 });
+  }
 
   render() {
     return (
       <ListView
-        dataSource={this.state.dataSource}
+        dataSource={this._getDataSource(this.props.recipes)}
         renderRow={this._renderRow}
       />
     );
@@ -34,5 +29,11 @@ export default class RecipeList extends React.Component {
     return (
       <Text>{rowData.name}</Text>
     );
+  };
+
+  _getDataSource = (recipes) => {
+    return new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2
+    }).cloneWithRows(recipes);
   };
 }

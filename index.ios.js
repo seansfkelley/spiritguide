@@ -11,25 +11,23 @@ process.nextTick = setImmediate;
 import log from 'loglevel';
 log.setLevel('debug');
 
-import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import React from 'react';
+import { AppRegistry, StyleSheet, View } from 'react-native';
+import { Provider } from 'react-redux';
 
-import App from './js/App';
-import { initializeStore } from './js/store';
+import App from './js/components/App';
+import store, { initializeStore } from './js/store';
 
 initializeStore();
 
-class spiritguide extends Component {
+class spiritguide extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <App/>
-      </View>
+      <Provider store={store}>
+        <View style={styles.container}>
+          <App/>
+        </View>
+      </Provider>
     );
   }
 }

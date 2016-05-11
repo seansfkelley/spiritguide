@@ -1,5 +1,7 @@
 import React from 'react';
-import { BASE_LIQUORS } from './definitions';
+import { BASE_LIQUORS, UNASSIGNED_BASE_LIQUOR } from '../definitions';
+
+const LEGAL_BASE_LIQUORS = BASE_LIQUORS.concat([ UNASSIGNED_BASE_LIQUOR ]);
 
 const {
   arrayOf,
@@ -19,8 +21,8 @@ export const measuredIngredient = shape({
 export const recipe = shape({
   name: string.isRequired,
   base: oneOfType([
-    oneOf(BASE_LIQUORS),
-    arrayOf(oneOf(BASE_LIQUORS))
+    oneOf(LEGAL_BASE_LIQUORS),
+    arrayOf(oneOf(LEGAL_BASE_LIQUORS))
   ]).isRequired,
   ingredients: arrayOf(measuredIngredient).isRequired,
   instructions: string.isRequired,
