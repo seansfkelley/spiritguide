@@ -10,7 +10,7 @@ export default function reduceApp(state = EMPTY_STORE, action) {
   switch(action.type) {
     case ActionType.INITIAL_LOAD_COMPLETE:
       return update(state, {
-        initialLoadComplete: true
+        initialLoadComplete: { $set: true }
       });
 
     default:

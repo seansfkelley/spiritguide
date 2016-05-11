@@ -6,7 +6,7 @@ import Promise from 'bluebird';
 import { AsyncStorage } from 'react-native';
 
 import { getDefaultRecipeIds, bulkLoad } from '../db/recipes';
-import { loadRecipes } from './actions';
+import { loadRecipes, initialLoadComplete } from './actions';
 import reducers from './reducers';
 
 const rootReducer = combineReducers(reducers);
@@ -31,7 +31,10 @@ export const initializeStore = _.once(() => {
     return AsyncStorage.setItem(SAVED_RECIPE_IDS_KEY, JSON.stringify(recipeIds)).then(() => recipeIds);
   })
   .then(recipeIds => {
-    store.dispatch(loadRecipes(recipeIds));
+    return store.dispatch(loadRecipes(recipeIds));
+  })
+  .then(() => {
+    store.dispatch(initialLoadComplete());
   });
 });
 
