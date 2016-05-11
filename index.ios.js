@@ -11,7 +11,7 @@ import { Provider } from 'react-redux';
 
 import App from './js/components/App';
 import store, { initializeStore } from './js/store';
-import { app } from './js/styles';
+import styles from './js/styles';
 
 initializeStore();
 
@@ -19,7 +19,7 @@ class SpiritGuideApp extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <View style={app}>
+        <View style={styles.app}>
           <App/>
         </View>
       </Provider>

@@ -2,26 +2,26 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PureRender from 'pure-render-decorator';
 
-import { selectAlphabeticalRecipes } from '../store/selectors';
+import { selectGroupedAlphabeticalRecipes } from '../store/selectors';
 import { recipe } from './propTypes';
 import RecipeList from './RecipeList';
 
 @PureRender
 class App extends React.Component {
   static propTypes = {
-    alphabeticalRecipes: React.PropTypes.arrayOf(recipe)
+    groupedRecipes: React.PropTypes.arrayOf(React.PropTypes.arrayOf(recipe))
   };
 
   render() {
     return (
-      <RecipeList recipes={this.props.alphabeticalRecipes}/>
+      <RecipeList recipes={this.props.groupedRecipes}/>
     );
   }
 }
 
 function mapStateToProps(state) {
   return {
-    alphabeticalRecipes: selectAlphabeticalRecipes(state)
+    groupedRecipes: selectGroupedAlphabeticalRecipes(state)
   };
 }
 

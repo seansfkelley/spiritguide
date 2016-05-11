@@ -20,6 +20,8 @@ export const measuredIngredient = shape({
 
 export const recipe = shape({
   name: string.isRequired,
+  canonicalName: string.isRequired,
+  sortName: string.isRequired,
   base: oneOfType([
     oneOf(LEGAL_BASE_LIQUORS),
     arrayOf(oneOf(LEGAL_BASE_LIQUORS))

@@ -4,11 +4,12 @@ import PureRender from 'pure-render-decorator';
 import memoize from 'memoizee';
 
 import { recipe } from './propTypes';
+import styles from '../styles';
 
 @PureRender
 export default class RecipeList extends React.Component {
   static propTypes = {
-    recipes: React.PropTypes.arrayOf(recipe).isRequired
+    recipes: React.PropTypes.arrayOf(React.PropTypes.arrayOf(recipe)).isRequired
   };
 
   constructor() {
@@ -17,10 +18,14 @@ export default class RecipeList extends React.Component {
   }
 
   render() {
+    console.log(this.props.recipes);
     return (
       <ListView
+        styles={styles.recipeList}
         dataSource={this._getDataSource(this.props.recipes)}
         renderRow={this._renderRow}
+        renderSectionHeader={this._renderSectionHeader}
+        initialListSize={15}
       />
     );
   }
@@ -31,9 +36,19 @@ export default class RecipeList extends React.Component {
     );
   };
 
+  _renderSectionHeader = (sectionData, sectionId) => {
+    return (
+      <Text>{sectionData[0].sortName[0].toUpperCase()}</Text>
+    );
+  };
+
   _getDataSource = (recipes) => {
     return new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2
-    }).cloneWithRows(recipes);
+      // TODO: Make these functions smarter.
+      // TODO: Memoizing this is wrong; we want to be able to take advantage of the diffing behavior
+      // that allows you to create new DataSources from old ones.
+      rowHasChanged: (r1, r2) => r1 !== r2,
+      sectionHeaderHasChanged: (s1, s2) => s1 !== s2
+    }).cloneWithRowsAndSections(recipes);
   };
 }
