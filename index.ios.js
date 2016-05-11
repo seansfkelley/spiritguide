@@ -4,6 +4,13 @@
  * @flow
  */
 
+// "polyfill" nextTick so PouchDB works.
+process.nextTick = setImmediate;
+
+// Log all the things ASAP.
+import log from 'loglevel';
+log.setLevel('debug');
+
 import React, { Component } from 'react';
 import {
   AppRegistry,

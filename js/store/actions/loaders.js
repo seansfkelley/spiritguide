@@ -9,7 +9,6 @@ export function loadRecipes(recipeIds) {
     const recipeIdsToLoad = _.keys(recipesById).filter(recipeId => !recipesById[recipeId]);
 
     if (recipeIdsToLoad.length) {
-      // return Promise.resolve(fetch('http://localhost:5984/recipes/bulk'))
       return bulkLoad(recipeIdsToLoad)
       .then(console.log.bind(console));
     } else {

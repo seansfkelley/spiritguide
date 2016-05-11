@@ -8,13 +8,16 @@ const { recipeDb, configDb } = get();
 
 export function getDefaultRecipeIds() {
   return configDb.get('default-recipe-list')
-  .then(({ defaultIds }) => defaultIds);
+  .then(({ defaultIds }) => {
+    log.debug(`loaded ${defaultIds.length} default recipe IDs`);
+    return defaultIds;
+  });
 }
 
 export function save(recipe) {
   return recipeDb.post(recipe)
   .then(({ ok, id, rev }) => {
-    log.info("saved new recipe with ID #{id}");
+    log.info(`saved new recipe with ID ${id}`);
     return id;
   });
 }
@@ -25,34 +28,36 @@ export function load(recipeId) {
     if (recipe) {
       return _.extend({ recipeId }, _.omit(recipe, '_id'));
     } else {
-      log.info("failed to find recipe with ID '#{recipeId}'");
+      log.info(`failed to find recipe with ID '${recipeId}'`);
     }
   });
 }
 
 export function bulkLoad(recipeIds) {
   if (!recipeIds || recipeIds.length === 0) {
-    log.debug("bulk-load requested to load nothing; parameter was #{JSON.stringify recipeIds}");
+    log.debug(`bulk-load requested to load nothing; parameter was ${JSON.stringify(recipeIds)}`);
     return Promise.resolve({});
   } else {
-    log.debug("bulk-loading #{recipeIds.length} recipes");
+    log.debug(`bulk-loading ${recipeIds.length} recipes`);
     return recipeDb.allDocs({
       keys: recipeIds,
       include_docs: true
     })
     .then(({ total_rows, offset, rows }) => {
+      log.debug(`bulk-loaded ${rows.length} rows for recipes`);
+
       // rows -> { id, key, value: { rev }, doc: { ... }}
       const recipes = _.chain(rows)
-        .pluck('doc')
+        .map('doc')
         .compact()
-        .indexBy('_id')
+        .keyBy('_id')
         .mapValues(r => _.omit(r, '_id', '_rev'))
         .value();
 
       const loadedIds = _.keys(recipes);
       const missingIds = _.difference(recipeIds, loadedIds);
       if (missingIds.length) {
-        log.warn("failed to bulk-load some recipes: #{missingIds.join ', '}");
+        log.warn(`failed to bulk-load some recipes: ${missingIds.join(', ')}`);
       }
 
       return recipes;
