@@ -1,4 +1,6 @@
-const ACTION_NAMES = [
+import enumeration from '../util/enum';
+
+export default enumeration(
   'INITIAL_LOAD_COMPLETE',
   'SET_RECIPE_SEARCH_TERM',
   'SET_INGREDIENT_SEARCH_TERM',
@@ -8,10 +10,4 @@ const ACTION_NAMES = [
   'RECIPES_LOADED',
   'SAVE_RECIPE',
   'DELETE_RECIPE'
-];
-
-const ActionType = {};
-
-ACTION_NAMES.forEach(name => ActionType[name] = Symbol(name));
-
-export default ActionType;
+);

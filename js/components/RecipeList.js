@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ListView, Text } from 'react-native';
+import { View, ListView, Text, TouchableHighlight } from 'react-native';
 import PureRender from 'pure-render-decorator';
 import memoize from 'memoizee';
 import { StyleSheet } from 'react-native';
@@ -9,7 +9,8 @@ import { recipe } from './propTypes';
 @PureRender
 export default class RecipeList extends React.Component {
   static propTypes = {
-    recipes: React.PropTypes.arrayOf(React.PropTypes.arrayOf(recipe)).isRequired
+    recipes: React.PropTypes.arrayOf(React.PropTypes.arrayOf(recipe)).isRequired,
+    onPress: React.PropTypes.func.isRequired
   };
 
   constructor() {
@@ -18,7 +19,6 @@ export default class RecipeList extends React.Component {
   }
 
   render() {
-    console.log(this.props.recipes);
     return (
       <ListView
         styles={styles.recipeList}
@@ -32,7 +32,13 @@ export default class RecipeList extends React.Component {
 
   _renderRow = (rowData, sectionId, rowId) => {
     return (
-      <Text>{rowData.name}</Text>
+      <TouchableHighlight
+        style={styles.row}
+        underlayColor='#f6f6f6'
+        onPress={this.props.onPress.bind(null, sectionId, rowId)}
+      >
+        <Text style={styles.rowText}>{rowData.name}</Text>
+      </TouchableHighlight>
     );
   };
 
@@ -58,6 +64,14 @@ export default class RecipeList extends React.Component {
 const styles = StyleSheet.create({
   list: {
     flex: 1
+  },
+  row: {
+    backgroundColor: '#fff'
+  },
+  rowText: {
+    fontSize: 16,
+    paddingLeft: 12,
+    paddingVertical: 12
   },
   header: {
     justifyContent: 'center',
