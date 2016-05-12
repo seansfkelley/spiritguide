@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, ListView, Text, TouchableHighlight } from 'react-native';
+import { View, ListView, Text, TouchableHighlight, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
 import memoize from 'memoizee';
-import { StyleSheet } from 'react-native';
 
 import { recipe } from './propTypes';
 

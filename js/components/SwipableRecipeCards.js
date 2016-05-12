@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, Text, StyleSheet } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, Dimensions } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
 import { recipe } from './propTypes';
@@ -13,13 +13,17 @@ export default class SwipableRecipeCards extends React.Component {
   };
 
   render() {
+    const { width, height } = Dimensions.get('window');
+    const fullScreen = { width, height };
     return (
       <ScrollView
         style={styles.container}
         horizontal={true}
+        pagingEnabled={true}
+        showsHorizontalScrollIndicator={false}
       >
         {this.props.recipes.map(recipe =>
-          <RecipeCard recipe={recipe} style={styles.card} key={recipe.recipeId}/>)
+          <RecipeCard recipe={recipe} style={[ fullScreen, styles.card ]} key={recipe.recipeId}/>)
         }
       </ScrollView>
     );
@@ -29,9 +33,10 @@ export default class SwipableRecipeCards extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0)'
   },
   card: {
-    width: 300
+    overflow: 'hidden'
   }
 });
