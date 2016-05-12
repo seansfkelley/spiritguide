@@ -1,10 +1,10 @@
 import React from 'react';
-import { ListView, Text } from 'react-native';
+import { View, ListView, Text } from 'react-native';
 import PureRender from 'pure-render-decorator';
 import memoize from 'memoizee';
+import { StyleSheet } from 'react-native';
 
 import { recipe } from './propTypes';
-import styles from '../styles';
 
 @PureRender
 export default class RecipeList extends React.Component {
@@ -38,7 +38,9 @@ export default class RecipeList extends React.Component {
 
   _renderSectionHeader = (sectionData, sectionId) => {
     return (
-      <Text>{sectionData[0].sortName[0].toUpperCase()}</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>{sectionData[0].sortName[0].toUpperCase()}</Text>
+      </View>
     );
   };
 
@@ -52,3 +54,20 @@ export default class RecipeList extends React.Component {
     }).cloneWithRowsAndSections(recipes);
   };
 }
+
+const styles = StyleSheet.create({
+  list: {
+    flex: 1
+  },
+  header: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    backgroundColor: '#f6f6f6',
+    paddingVertical: 2,
+    paddingLeft: 6
+  },
+  headerText: {
+    color: '#444',
+    fontSize: 12
+  }
+});
