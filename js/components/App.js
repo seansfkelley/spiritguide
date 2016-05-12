@@ -50,10 +50,19 @@ class App extends React.Component {
   _renderScene = (route, navigator) => {
     switch (route.type) {
       case RouteType.RECIPE_LIST:
-        return <RecipeList recipes={this.props.groupedAlphabeticalRecipes} onPress={this._onRecipePress.bind(this, navigator)}/>;
+        return <RecipeList
+          recipes={this.props.groupedAlphabeticalRecipes}
+          onPress={this._onRecipePress.bind(this, navigator)}
+        />;
 
       case RouteType.RECIPE_CARDS:
-        return <SwipableRecipeCards recipes={this.props.alphabeticalRecipes}/>;
+        const initialIndex = this.props.groupedAlphabeticalRecipes.slice(0, route.sectionIndex)
+          .map(section => section.length)
+          .reduce((a, b) => a + b, 0) + route.rowIndex;
+        return <SwipableRecipeCards
+          recipes={this.props.alphabeticalRecipes}
+          initialIndex={initialIndex}
+        />;
 
       default:
         throw new Error('Cannot render route type ' + (route.type ? route.type.toString() : route.type));

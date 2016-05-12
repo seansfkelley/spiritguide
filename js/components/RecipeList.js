@@ -35,7 +35,7 @@ export default class RecipeList extends React.Component {
       <TouchableHighlight
         style={styles.row}
         underlayColor='#f6f6f6'
-        onPress={this.props.onPress.bind(null, sectionId, rowId)}
+        onPress={this.props.onPress.bind(null, +sectionId, +rowId)}
       >
         <Text style={styles.rowText}>{rowData.name}</Text>
       </TouchableHighlight>

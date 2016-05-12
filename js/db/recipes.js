@@ -51,7 +51,7 @@ export function bulkLoad(recipeIds) {
         .map('doc')
         .compact()
         .keyBy('_id')
-        .mapValues(r => _.omit(r, '_id', '_rev'))
+        .mapValues(r => _.extend({ recipeId: r._id }, _.omit(r, '_id', '_rev')))
         .value();
 
       const loadedIds = _.keys(recipes);

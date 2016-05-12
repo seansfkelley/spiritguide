@@ -19,6 +19,7 @@ export const measuredIngredient = shape({
 });
 
 export const recipe = shape({
+  recipeId: string.isRequired,
   name: string.isRequired,
   canonicalName: string.isRequired,
   sortName: string.isRequired,
