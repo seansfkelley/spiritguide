@@ -15,34 +15,58 @@ export default class SwipableRecipeCards extends React.Component {
     initialIndex: React.PropTypes.number.isRequired
   };
 
+  state = {
+    currentIndex: this.props.initialIndex
+  };
+
   render() {
     const { width, height } = Dimensions.get('window');
-    const fullScreen = { width, height };
+    const containerSizing = { width, height };
     const cardSizing = {
       height: height - 2 * OVERFLOW_VISIBLE,
       width: width - 2 * (OVERFLOW_VISIBLE + INTER_CARD_SPACING)
     };
+    const cardStyle = [ cardSizing, styles.card ];
     return (
-      <View style={[ fullScreen, styles.container ]}>
+      <View style={[ containerSizing, styles.container ]}>
         <ScrollView
           style={styles.scroll}
           horizontal={true}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
+          onScroll={this._onScroll}
+          scrollEventThrottle={500}
           ref='scroll'
         >
-          {this.props.recipes.map(recipe =>
-            <RecipeCard recipe={recipe} style={[ cardSizing, styles.card ]} key={recipe.recipeId}/>)
-          }
+          {this.props.recipes.map((recipe, i) =>
+            Math.abs(i - this.state.currentIndex) <= 2
+              ? <RecipeCard recipe={recipe} style={cardStyle} key={recipe.recipeId}/>
+              : <View style={cardStyle} key={recipe.recipeId}/> // Placeholder.
+          )}
         </ScrollView>
       </View>
     );
   }
 
   componentDidMount() {
-    const pageSize = Dimensions.get('window').width - 2 * OVERFLOW_VISIBLE;
-    this.refs.scroll.scrollTo({ x: pageSize * this.props.initialIndex, y: 0, animated: false });
+    this.refs.scroll.scrollTo({
+      x: this._computePageSize() * this.props.initialIndex,
+      y: 0,
+      animated: false
+    });
   }
+
+  _computePageSize() {
+    return Dimensions.get('window').width - 2 * OVERFLOW_VISIBLE;
+  }
+
+  _onScroll = (event) => {
+    const xOffset = event.nativeEvent.contentOffset.x;
+    const pageSize = this._computePageSize();
+    this.setState({
+      currentIndex: Math.floor((xOffset + pageSize / 2) / pageSize)
+    });
+  };
 }
 
 const styles = StyleSheet.create({

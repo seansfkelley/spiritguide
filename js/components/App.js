@@ -27,7 +27,7 @@ class App extends React.Component {
   render() {
     return (
       <Navigator
-        initialRoute={{ type: RouteType.RECIPE_CARDS }}
+        initialRoute={{ type: RouteType.RECIPE_CARDS, sectionIndex: 0, rowIndex: 0 }}
         configureScene={this._configureScene}
         renderScene={this._renderScene}
       />
