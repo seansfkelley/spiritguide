@@ -59,6 +59,7 @@ export default class RecipeCard extends React.Component {
 
 const styles = StyleSheet.create({
   card: {
+    flex: 1,
     flexDirection: 'column'
   },
   titleText: {
