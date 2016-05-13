@@ -29,6 +29,7 @@ export default class SwipableRecipeCards extends React.Component {
           horizontal={true}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
+          ref='scroll'
         >
           {this.props.recipes.map(recipe =>
             <RecipeCard recipe={recipe} style={[ cardSizing, styles.card ]} key={recipe.recipeId}/>)
@@ -36,6 +37,11 @@ export default class SwipableRecipeCards extends React.Component {
         </ScrollView>
       </View>
     );
+  }
+
+  componentDidMount() {
+    const pageSize = Dimensions.get('window').width - 2 * OVERFLOW_VISIBLE;
+    this.refs.scroll.scrollTo({ x: pageSize * this.props.initialIndex, y: 0, animated: false });
   }
 }
 
