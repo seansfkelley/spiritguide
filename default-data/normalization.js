@@ -28,7 +28,7 @@ export function normalizeRecipe(r) {
   r.canonicalName = _.deburr(r.name).toLowerCase();
   nameWords = r.canonicalName.split(' ');
   if ([ 'a', 'the' ].indexOf(nameWords[0]) !== -1) {
-    r.sortName = nameWords[1..].join(' ');
+    r.sortName = nameWords.slice(1).join(' ');
   } else {
     r.sortName = r.canonicalName;
   }

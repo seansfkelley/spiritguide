@@ -10,7 +10,7 @@ import { normalizeRecipe, normalizeIngredient } from './normalization';
 
 const xor = (a, b) => (a || b) && !(a && b);
 
-const BASE_LIQUORS = [ UNASSIGNED_BASE_LIQUOR ].concat(BASE_LIQUORS);
+const ALL_BASE_LIQUORS = [ UNASSIGNED_BASE_LIQUOR ].concat(BASE_LIQUORS);
 
 const INGREDIENT_SCHEMA = {
   type: 'object',
@@ -19,7 +19,7 @@ const INGREDIENT_SCHEMA = {
     display: REQUIRED_STRING,
     // The category this ingredient is in (e.g., spirit, mixer, syrup...)
     group: {
-      type: 'string'
+      type: 'string',
       conform: (v, object) => xor(!!v, !(_.isUndefined(object.tangible) ? true : object.tangible))
     },
     // Intangible ingredients are useful to index on or specify, but are not specific enough to
@@ -87,9 +87,9 @@ const RECIPE_SCHEMA = {
       required: true,
       conform: (strOrArray) => {
         if (_.isString(strOrArray)) {
-          return BASE_LIQUORS.indexOf(strOrArray) !== -1;
+          return ALL_BASE_LIQUORS.indexOf(strOrArray) !== -1;
         } else if (_.isArray(strOrArray)) {
-          return _.every(strOrArray, (base) => BASE_LIQUORS.indexOf(base) !== -1);
+          return _.every(strOrArray, (base) => ALL_BASE_LIQUORS.indexOf(base) !== -1);
         } else {
           return false;
         }
