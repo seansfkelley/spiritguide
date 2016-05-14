@@ -3,6 +3,7 @@ import { View, ListView, Text, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
 import { measuredIngredient } from './propTypes';
+import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
 import { fractionify } from '../util/format';
 
 @PureRender
@@ -39,14 +40,17 @@ const styles = StyleSheet.create({
     flexWrap: 'nowrap'
   },
   amount: {
-    marginRight: 4
+    marginRight: 4,
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
   },
   unit: {
     fontSize: 10,
     fontWeight: '500',
-    marginBottom: 2
+    marginBottom: 2,
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
   },
   ingredient: {
-    flex: 1
+    flex: 1,
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
   }
 });

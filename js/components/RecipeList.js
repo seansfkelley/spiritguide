@@ -4,6 +4,7 @@ import PureRender from 'pure-render-decorator';
 import memoize from 'memoizee';
 
 import { recipe } from './propTypes';
+import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
 
 @PureRender
 export default class RecipeList extends React.Component {
@@ -71,7 +72,8 @@ const styles = StyleSheet.create({
   rowText: {
     fontSize: 16,
     paddingLeft: 12,
-    paddingVertical: 12
+    paddingVertical: 12,
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
   },
   header: {
     justifyContent: 'center',
@@ -82,6 +84,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#444',
-    fontSize: 12
+    fontSize: 12,
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
   }
 });
