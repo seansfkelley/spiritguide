@@ -8,6 +8,7 @@ import RecipeCard from './RecipeCard';
 const OVERFLOW_VISIBLE = 30;
 const INTER_CARD_SPACING = 8;
 
+// TODO: Replace this with horizontal ListView.
 @PureRender
 export default class SwipableRecipeCards extends React.Component {
   static propTypes = {
