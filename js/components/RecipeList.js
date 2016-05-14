@@ -65,7 +65,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   row: {
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    overflow: 'hidden'
   },
   rowText: {
     fontSize: 16,
