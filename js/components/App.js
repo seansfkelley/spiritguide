@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Navigator, StatusBar, StyleSheet } from 'react-native';
+import {
+  View,
+  Navigator,
+  StatusBar,
+  ActivityIndicatorIOS,
+  StyleSheet
+} from 'react-native';
 import { connect } from 'react-redux';
 import PureRender from 'pure-render-decorator';
 
@@ -21,18 +27,27 @@ const RouteType = enumeration(
 @PureRender
 class App extends React.Component {
   static propTypes = {
-    alphabeticalRecipes: React.PropTypes.arrayOf(recipe),
-    groupedAlphabeticalRecipes: React.PropTypes.arrayOf(React.PropTypes.arrayOf(recipe))
+    initialLoadComplete: React.PropTypes.bool.isRequired,
+    alphabeticalRecipes: React.PropTypes.arrayOf(recipe).isRequired,
+    groupedAlphabeticalRecipes: React.PropTypes.arrayOf(React.PropTypes.arrayOf(recipe)).isRequired
   };
 
   render() {
-    return (
-      <Navigator
-        initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 0, rowIndex: 0 }}
-        configureScene={this._configureScene}
-        renderScene={this._renderScene}
-      />
-    );
+    if (this.props.initialLoadComplete) {
+      return (
+        <Navigator
+          initialRoute={{ type: RouteType.RECIPE_CARDS, sectionIndex: 1, rowIndex: 7 }}
+          configureScene={this._configureScene}
+          renderScene={this._renderScene}
+        />
+      );
+    } else {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicatorIOS size='large'/>
+        </View>
+      );
+    }
   }
 
   _configureScene = (route, routeStack) => {
@@ -63,9 +78,11 @@ class App extends React.Component {
         );
 
       case RouteType.RECIPE_CARDS:
+      console.log(this.props);
         const initialIndex = this.props.groupedAlphabeticalRecipes.slice(0, route.sectionIndex)
           .map(section => section.length)
           .reduce((a, b) => a + b, 0) + route.rowIndex;
+          console.log(initialIndex);
         return (
           <View style={styles.container}>
             <StatusBar hidden={true}/>
@@ -96,11 +113,17 @@ const styles = StyleSheet.create({
   },
   statusBarSpacer: {
     height: IOS_STATUS_BAR_HEIGHT
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 
 function mapStateToProps(state) {
   return {
+    initialLoadComplete: state.app.initialLoadComplete,
     alphabeticalRecipes: selectAlphabeticalRecipes(state),
     groupedAlphabeticalRecipes: selectGroupedAlphabeticalRecipes(state)
   };

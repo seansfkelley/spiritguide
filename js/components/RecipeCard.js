@@ -67,7 +67,8 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   recipeBody: {
-    flex: 1
+    flex: 1,
+    paddingTop: 6
   },
   ingredientRow: {
     flex: 1

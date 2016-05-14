@@ -14,7 +14,8 @@ const rootReducer = combineReducers(reducers);
 const middlewares = [
   ThunkMiddleware,
   createLogger({
-    actionTransformer: action => _.defaults({ type: action.type.toString() }, action)
+    actionTransformer: action => _.defaults({ type: action.type.toString() }, action),
+    collapsed: true
   })
 ]
 

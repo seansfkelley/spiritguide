@@ -14,9 +14,11 @@ export default class MeasuredIngredient extends React.Component {
 
   render() {
     return (
-      <View style={[ styles.ingredient, this.props.style ]}>
-        <Text style={styles.amount}>{fractionify(this.props.ingredient.displayAmount)}</Text>
-        <Text style={styles.unit}>{this.props.ingredient.displayUnit}</Text>
+      <View style={[ styles.container, this.props.style ]}>
+        <View style={styles.amountWrapper}>
+          <Text style={styles.amount}>{fractionify(this.props.ingredient.displayAmount)}</Text>
+          <Text style={styles.unit}>{_.get(this.props.ingredient, 'displayUnit', '').toUpperCase()}</Text>
+        </View>
         <Text style={styles.ingredient}>{this.props.ingredient.displayIngredient}</Text>
       </View>
     );
@@ -24,14 +26,27 @@ export default class MeasuredIngredient extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  ingredient: {
-    flexDirection: 'row'
+  container: {
+    padding: 10,
+    flexDirection: 'row',
+    flexWrap: 'nowrap'
+  },
+  amountWrapper: {
+    width: 100,
+    justifyContent: 'flex-start',
+    alignItems: 'flex-end',
+    flexDirection: 'row',
+    flexWrap: 'nowrap'
   },
   amount: {
+    marginRight: 4
   },
   unit: {
+    fontSize: 10,
+    fontWeight: '500',
+    marginBottom: 2
   },
   ingredient: {
-
+    flex: 1
   }
 });
