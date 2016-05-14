@@ -14,7 +14,7 @@ import _ from 'lodash';
 import Promise from 'bluebird';
 import md5 from 'MD5';
 
-import defaultDataLoaders from '../default-data/loaders';
+import { loadRecipeFile, loadIngredientGroups, loadIngredients } from '../default-data/loaders';
 import config from '../js/db/config';
 import { get as getDb } from '../js/db/couchdb';
 
@@ -60,7 +60,7 @@ Promise.resolve()
   log.debug(`will load recipes from files: ${recipeFilesToLoad.join(', ')}`);
 
   const recipesWithId = _.chain(recipeFilesToLoad)
-    .map(defaultDataLoaders.loadRecipeFile)
+    .map(loadRecipeFile)
     .flatten()
     // So, we don't really care if this is a hash or not. It just needs to be sufficiently unique.
     // The reason it does this is because it avoids accidentally assigning the same ID to a default
@@ -95,7 +95,7 @@ Promise.resolve()
     return configDb.put({
       _id: DEFAULT_RECIPE_LIST_DOC_ID,
       _rev,
-      defaultIds: _.pluck(recipesWithId, '_id')
+      defaultIds: _.map(recipesWithId, '_id')
     });
   })
   .then(() => {
@@ -103,7 +103,7 @@ Promise.resolve()
   });
 })
 .then(() => {
-  const ingredients = defaultDataLoaders.loadIngredients();
+  const ingredients = loadIngredients();
   log.info(`${ingredients.length} ingredients to be inserted`);
 
   const ingredientsWithId = ingredients.map((i) => _.extend({ _id : i.tag }, i));
@@ -131,7 +131,7 @@ Promise.resolve()
   });
 })
 .then((_rev) => {
-  const orderedGroups = defaultDataLoaders.loadIngredientGroups();
+  const orderedGroups = loadIngredientGroups();
 
   return configDb.put({
     _id: INGREDIENT_GROUP_DOC_ID,

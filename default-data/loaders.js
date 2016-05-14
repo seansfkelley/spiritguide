@@ -111,9 +111,9 @@ export const loadRecipeFile = _.memoize((filename) => {
   const recipes = yaml.safeLoad(fs.readFileSync(`${__dirname}/data/${filename}.yaml`));
   log.debug(`loaded ${recipes.length} recipe(s) from ${filename}`);
 
-  const unassignedBases = _.where(recipes, { base : UNASSIGNED_BASE_LIQUOR });
+  const unassignedBases = _.filter(recipes, { base : UNASSIGNED_BASE_LIQUOR });
   if (unassignedBases.length) {
-    log.warn(`${unassignedBases.length} recipe(s) in ${filename} have an unassigned base liquor: ${_.pluck(unassignedBases, 'name').join(', ')}`);
+    log.warn(`${unassignedBases.length} recipe(s) in ${filename} have an unassigned base liquor: ${_.map(unassignedBases, 'name').join(', ')}`);
   }
 
   validateOrThrow(recipes, {
