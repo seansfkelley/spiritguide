@@ -1,5 +1,3 @@
-#!/usr/bin/env babel-node
-
 import log from 'loglevel';
 log.setLevel('info');
 
