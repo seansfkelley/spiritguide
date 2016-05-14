@@ -1,9 +1,10 @@
 import React from 'react';
-import { Navigator } from 'react-native';
+import { View, Navigator, StatusBar, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import PureRender from 'pure-render-decorator';
 
 import enumeration from '../util/enum';
+import { IOS_STATUS_BAR_HEIGHT } from './constants';
 import {
   selectAlphabeticalRecipes,
   selectGroupedAlphabeticalRecipes
@@ -27,7 +28,7 @@ class App extends React.Component {
   render() {
     return (
       <Navigator
-        initialRoute={{ type: RouteType.RECIPE_CARDS, sectionIndex: 0, rowIndex: 0 }}
+        initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 0, rowIndex: 0 }}
         configureScene={this._configureScene}
         renderScene={this._renderScene}
       />
@@ -50,19 +51,30 @@ class App extends React.Component {
   _renderScene = (route, navigator) => {
     switch (route.type) {
       case RouteType.RECIPE_LIST:
-        return <RecipeList
-          recipes={this.props.groupedAlphabeticalRecipes}
-          onPress={this._onRecipePress.bind(this, navigator)}
-        />;
+        return (
+          <View style={styles.container}>
+            <View style={styles.statusBarSpacer}/>
+            <StatusBar hidden={false}/>
+            <RecipeList
+              recipes={this.props.groupedAlphabeticalRecipes}
+              onPress={this._onRecipePress.bind(this, navigator)}
+            />
+          </View>
+        );
 
       case RouteType.RECIPE_CARDS:
         const initialIndex = this.props.groupedAlphabeticalRecipes.slice(0, route.sectionIndex)
           .map(section => section.length)
           .reduce((a, b) => a + b, 0) + route.rowIndex;
-        return <SwipableRecipeCards
-          recipes={this.props.alphabeticalRecipes}
-          initialIndex={initialIndex}
-        />;
+        return (
+          <View style={styles.container}>
+            <StatusBar hidden={true}/>
+            <SwipableRecipeCards
+              recipes={this.props.alphabeticalRecipes}
+              initialIndex={initialIndex}
+            />
+          </View>
+        );
 
       default:
         throw new Error('Cannot render route type ' + (route.type ? route.type.toString() : route.type));
@@ -77,6 +89,15 @@ class App extends React.Component {
     });
   };
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  statusBarSpacer: {
+    height: IOS_STATUS_BAR_HEIGHT
+  }
+});
 
 function mapStateToProps(state) {
   return {
