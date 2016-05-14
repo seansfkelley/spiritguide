@@ -1,0 +1,66 @@
+-
+  name: "Geek Squad"
+  ingredients:
+    -
+      tag: "mezcal"
+      displayAmount: "4"
+      displayUnit: "parts"
+      displayIngredient: "mezcal"
+    -
+      tag: "green chartreuse"
+      displayAmount: "2"
+      displayUnit: "parts"
+      displayIngredient: "green Chartreuse"
+    -
+      tag: "lime juice"
+      displayAmount: "4"
+      displayUnit: "parts"
+      displayIngredient: "lime juice"
+    -
+      tag: "simple syrup"
+      displayAmount: "1"
+      displayUnit: "part"
+      displayIngredient: "simple syrup"
+    -
+      tag: "cynar"
+      displayAmount: "0-1"
+      displayUnit: "part"
+      displayIngredient: "Cynar"
+  instructions: ""
+  source: "The Clover Club, NY"
+  base: tequila
+-
+  name: "?-1"
+  ingredients:
+    -
+      tag: "plum wine"
+      displayAmount: "3"
+      displayUnit: "parts"
+      displayIngredient: "Choya plum wine"
+    -
+      tag: "cucumber" # juice?
+      displayAmount: "2"
+      displayUnit: "parts"
+      displayIngredient: "cucumber juice"
+  instructions: "shaken"
+  base: wine
+-
+  name: "?-2"
+  ingredients:
+    -
+      tag: "sake"
+      displayAmount: "2"
+      displayUnit: "oz"
+      displayIngredient: "unfiltered sake"
+    -
+      tag: "rum"
+      displayAmount: "1"
+      displayUnit: "oz"
+      displayIngredient: "10 Cane aged rum"
+    -
+      tag: "vanilla"
+      displayAmount: "< 1/2 oz"
+      displayUnit: "oz"
+      displayIngredient: "vanilla simple syrup"
+  instructions: "shaken/stirred?"
+  base: wine
