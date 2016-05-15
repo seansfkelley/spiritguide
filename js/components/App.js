@@ -15,7 +15,9 @@ import {
   selectAlphabeticalRecipes,
   selectGroupedAlphabeticalRecipes
 } from '../store/selectors';
+import { BASE_LIQUORS } from '../definitions';
 import { recipe } from './propTypes';
+import SwipeSelector from './SwipeSelector';
 import RecipeList from './RecipeList';
 import SwipableRecipeCards from './SwipableRecipeCards';
 
@@ -36,7 +38,7 @@ class App extends React.Component {
     if (this.props.initialLoadComplete) {
       return (
         <Navigator
-          initialRoute={{ type: RouteType.RECIPE_CARDS, sectionIndex: 1, rowIndex: 7 }}
+          initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 1, rowIndex: 7 }}
           configureScene={this._configureScene}
           renderScene={this._renderScene}
         />
@@ -70,6 +72,10 @@ class App extends React.Component {
           <View style={styles.container}>
             <View style={styles.statusBarSpacer}/>
             <StatusBar hidden={false}/>
+            <SwipeSelector
+              options={BASE_LIQUORS.map(l => ({ label: l, value: l }))}
+              onSelect={console.log.bind(console)}
+            />
             <RecipeList
               recipes={this.props.groupedAlphabeticalRecipes}
               onPress={this._onRecipePress.bind(this, navigator)}
@@ -78,11 +84,9 @@ class App extends React.Component {
         );
 
       case RouteType.RECIPE_CARDS:
-      console.log(this.props);
         const initialIndex = this.props.groupedAlphabeticalRecipes.slice(0, route.sectionIndex)
           .map(section => section.length)
           .reduce((a, b) => a + b, 0) + route.rowIndex;
-          console.log(initialIndex);
         return (
           <View style={styles.container}>
             <StatusBar hidden={true}/>
