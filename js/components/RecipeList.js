@@ -5,11 +5,19 @@ import memoize from 'memoizee';
 
 import { recipe } from './propTypes';
 import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
+import {
+  rowAndSectionIdentities,
+  getSectionData,
+  makeGetRowData
+} from './util/listViewDataSourceUtils';
 
 @PureRender
 export default class RecipeList extends React.Component {
   static propTypes = {
-    recipes: React.PropTypes.arrayOf(React.PropTypes.arrayOf(recipe)).isRequired,
+    groupedRecipes: React.PropTypes.arrayOf(React.PropTypes.shape({
+      groupName: React.PropTypes.string.isRequired,
+      recipes: React.PropTypes.arrayOf(recipe).isRequired
+    })).isRequired,
     onPress: React.PropTypes.func.isRequired
   };
 
@@ -22,7 +30,7 @@ export default class RecipeList extends React.Component {
     return (
       <ListView
         styles={styles.recipeList}
-        dataSource={this._getDataSource(this.props.recipes)}
+        dataSource={this._getDataSource(this.props.groupedRecipes)}
         renderRow={this._renderRow}
         renderSectionHeader={this._renderSectionHeader}
         initialListSize={15}
@@ -45,19 +53,22 @@ export default class RecipeList extends React.Component {
   _renderSectionHeader = (sectionData, sectionId) => {
     return (
       <View style={styles.header}>
-        <Text style={styles.headerText}>{sectionData[0].sortName[0].toUpperCase()}</Text>
+        <Text style={styles.headerText}>{sectionData.groupName}</Text>
       </View>
     );
   };
 
-  _getDataSource = (recipes) => {
+  _getDataSource = (groupedRecipes) => {
+    const { sectionIds, rowIds } = rowAndSectionIdentities(groupedRecipes, 'recipes');
     return new ListView.DataSource({
       // TODO: Make these functions smarter.
       // TODO: Memoizing this is wrong; we want to be able to take advantage of the diffing behavior
       // that allows you to create new DataSources from old ones.
       rowHasChanged: (r1, r2) => r1 !== r2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2
-    }).cloneWithRowsAndSections(recipes);
+      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
+      getSectionData,
+      getRowData: makeGetRowData('recipes')
+    }).cloneWithRowsAndSections(groupedRecipes, sectionIds, rowIds);
   };
 }
 

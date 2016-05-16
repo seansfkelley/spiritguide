@@ -13,11 +13,15 @@ export const selectGroupedAlphabeticalRecipes = createSelector(
   (alphabeticalRecipes) => {
     let groups = [];
     alphabeticalRecipes.forEach((recipe, i) => {
-      const newGroup = i === 0 || recipe.sortName[0] !== alphabeticalRecipes[i - 1].sortName[0];
+      const maybeNewGroupName = recipe.sortName[0].toUpperCase();
+      const newGroup = i === 0 || maybeNewGroupName !== groups[groups.length - 1].groupName;
       if (newGroup) {
-        groups.push([ recipe ]);
+        groups.push({
+          groupName: maybeNewGroupName,
+          recipes: [ recipe ]
+        });
       } else {
-        groups[groups.length - 1].push(recipe);
+        groups[groups.length - 1].recipes.push(recipe);
       }
     })
     return groups;

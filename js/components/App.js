@@ -4,10 +4,12 @@ import {
   Navigator,
   StatusBar,
   ActivityIndicatorIOS,
-  StyleSheet
+  StyleSheet,
+  Text
 } from 'react-native';
 import { connect } from 'react-redux';
 import PureRender from 'pure-render-decorator';
+import SideMenu from 'react-native-side-menu';
 
 import enumeration from '../util/enum';
 import { IOS_STATUS_BAR_HEIGHT } from './constants';
@@ -31,17 +33,24 @@ class App extends React.Component {
   static propTypes = {
     initialLoadComplete: React.PropTypes.bool.isRequired,
     alphabeticalRecipes: React.PropTypes.arrayOf(recipe).isRequired,
-    groupedAlphabeticalRecipes: React.PropTypes.arrayOf(React.PropTypes.arrayOf(recipe)).isRequired
+    groupedAlphabeticalRecipes: React.PropTypes.arrayOf(React.PropTypes.shape({
+      groupName: React.PropTypes.string.isRequired,
+      recipes: React.PropTypes.arrayOf(recipe).isRequired
+    })).isRequired,
   };
 
   render() {
     if (this.props.initialLoadComplete) {
+      const menu = <Text>butts</Text>;
       return (
-        <Navigator
-          initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 1, rowIndex: 7 }}
-          configureScene={this._configureScene}
-          renderScene={this._renderScene}
-        />
+        <SideMenu menu={menu}>
+          <Navigator
+            initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 1, rowIndex: 7 }}
+            configureScene={this._configureScene}
+            renderScene={this._renderScene}
+            sceneStyle={styles.navigator}
+          />
+        </SideMenu>
       );
     } else {
       return (
@@ -77,7 +86,7 @@ class App extends React.Component {
               onSelect={console.log.bind(console)}
             />
             <RecipeList
-              recipes={this.props.groupedAlphabeticalRecipes}
+              groupedRecipes={this.props.groupedAlphabeticalRecipes}
               onPress={this._onRecipePress.bind(this, navigator)}
             />
           </View>
@@ -122,6 +131,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  navigator: {
+    backgroundColor: 'white'
   }
 });
 

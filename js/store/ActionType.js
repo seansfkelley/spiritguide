@@ -9,5 +9,6 @@ export default enumeration(
   'SET_SELECTED_RECIPE_LIST',
   'RECIPES_LOADED',
   'SAVE_RECIPE',
-  'DELETE_RECIPE'
+  'DELETE_RECIPE',
+  'TOGGLE_INGREDIENT_MENU'
 );

@@ -3,7 +3,8 @@ import update from 'immutability-helper';
 import ActionType from '../ActionType';
 
 const EMPTY_STORE = {
-  initialLoadComplete: false
+  initialLoadComplete: false,
+  ingredientMenuOpen: false
 };
 
 export default function reduceApp(state = EMPTY_STORE, action) {
@@ -11,6 +12,11 @@ export default function reduceApp(state = EMPTY_STORE, action) {
     case ActionType.INITIAL_LOAD_COMPLETE:
       return update(state, {
         initialLoadComplete: { $set: true }
+      });
+
+    case ActionType.TOGGLE_INGREDIENT_MENU:
+      return update(state, {
+        ingredientMenuOpen: !state.ingredientMenuOpen
       });
 
     default:
