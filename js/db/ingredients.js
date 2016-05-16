@@ -11,7 +11,7 @@ export function getIngredients() {
   .then(({ total_rows, offset, rows }) => {
     // rows -> { id, key, value: { rev }, doc: { ... }}
     return _.chain(rows)
-      .pluck('doc')
+      .map('doc')
       .map((r) => _.omit(r, '_id', '_rev'))
       .value();
   });
