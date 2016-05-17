@@ -82,7 +82,17 @@ class App extends React.Component {
       case RouteType.RECIPE_LIST:
         const menu = <IngredientConfigurator groupedIngredients={this.props.groupedIngredients}/>;
         return (
-          <SideMenu menu={menu}>
+          <SideMenu
+            menu={menu}
+            overlayAnimationStyle={(value, maxValue) => {
+              return {
+                backgroundColor: value.interpolate({
+                  inputRange: [0, maxValue],
+                  outputRange: [ 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.2)' ]
+                })
+              };
+            }}
+          >
             <View style={styles.container}>
               <View style={styles.statusBarSpacer}/>
               <StatusBar hidden={false}/>
