@@ -8,6 +8,7 @@ import {
   Text
 } from 'react-native';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PureRender from 'pure-render-decorator';
 import SideMenu from 'react-native-side-menu';
 
@@ -18,6 +19,7 @@ import {
   selectGroupedAlphabeticalRecipes,
   selectGroupedIngredients
 } from '../store/selectors';
+import * as filterActions from '../store/actions/filterActions';
 import { BASE_LIQUORS } from '../definitions';
 import { recipe, ingredient } from './propTypes';
 import SwipeSelector from './SwipeSelector';
@@ -42,7 +44,9 @@ class App extends React.Component {
     groupedIngredients: React.PropTypes.arrayOf(React.PropTypes.shape({
       name: React.PropTypes.string.isRequired,
       ingredients: React.PropTypes.arrayOf(ingredient).isRequired
-    })).isRequired
+    })).isRequired,
+    selectedIngredientTags: React.PropTypes.objectOf(React.PropTypes.bool).isRequired,
+    filterActions: React.PropTypes.objectOf(React.PropTypes.func).isRequired
   };
 
   render() {
@@ -80,7 +84,11 @@ class App extends React.Component {
   _renderScene = (route, navigator) => {
     switch (route.type) {
       case RouteType.RECIPE_LIST:
-        const menu = <IngredientConfigurator groupedIngredients={this.props.groupedIngredients}/>;
+        const menu = <IngredientConfigurator
+          groupedIngredients={this.props.groupedIngredients}
+          selectedIngredientTags={this.props.selectedIngredientTags}
+          onIngredientStateChange={this._onIngredientToggle}
+        />;
         return (
           <SideMenu
             menu={menu}
@@ -134,6 +142,12 @@ class App extends React.Component {
       rowIndex
     });
   };
+
+  _onIngredientToggle = (tag, state) => {
+    this.props.filterActions.setSelectedIngredientTags({
+      [tag]: state
+    });
+  };
 }
 
 const styles = StyleSheet.create({
@@ -158,8 +172,15 @@ function mapStateToProps(state) {
     initialLoadComplete: state.app.initialLoadComplete,
     alphabeticalRecipes: selectAlphabeticalRecipes(state),
     groupedAlphabeticalRecipes: selectGroupedAlphabeticalRecipes(state),
-    groupedIngredients: selectGroupedIngredients(state)
+    groupedIngredients: selectGroupedIngredients(state),
+    selectedIngredientTags: state.filters.selectedIngredientTags
   };
 }
 
-export default connect(mapStateToProps)(App);
+function mapDispatchToProps(dispatch) {
+  return {
+    filterActions: bindActionCreators(filterActions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

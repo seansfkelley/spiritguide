@@ -25,7 +25,7 @@ export default function reduceFilters(state = EMPTY_STORE, action) {
 
     case ActionType.SET_SELECTED_INGREDIENT_TAGS:
       return update(state, {
-        selectedIngredientTags: { $set: action.payload }
+        selectedIngredientTags: { $merge: action.payload }
       });
 
     case ActionType.SET_BASE_LIQUOR_FILTER:
