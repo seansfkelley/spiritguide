@@ -118,7 +118,7 @@ class App extends React.Component {
 
       case RouteType.RECIPE_CARDS:
         const initialIndex = this.props.groupedAlphabeticalRecipes.slice(0, route.sectionIndex)
-          .map(section => section.length)
+          .map(section => section.recipes.length)
           .reduce((a, b) => a + b, 0) + route.rowIndex;
         return (
           <View style={styles.container}>
