@@ -6,7 +6,7 @@ import log from 'loglevel';
 
 import { UNASSIGNED_BASE_LIQUOR, BASE_LIQUORS } from '../js/definitions';
 import { REQUIRED_STRING, OPTIONAL_STRING, validateOrThrow } from './revalidator-utils';
-import { normalizeRecipe, normalizeIngredient } from './normalization';
+import { normalizeRecipe, normalizeIngredient } from '../shared/normalization';
 
 const xor = (a, b) => (a || b) && !(a && b);
 

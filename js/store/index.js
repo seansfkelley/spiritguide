@@ -39,7 +39,8 @@ export const initializeStore = _.once(() => {
   .then(recipeIds => {
     return Promise.all([
       store.dispatch(loadRecipes(recipeIds)),
-      store.dispatch() // ...
+      store.dispatch(loadIngredientGroups()),
+      store.dispatch(loadIngredientsByTag())
     ]);
   })
   .then(() => {

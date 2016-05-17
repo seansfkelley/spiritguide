@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 export function rowAndSectionIdentities(arrayOfObjectsOfArrays, rowsField) {
-  console.log(arrayOfObjectsOfArrays);
   const sectionIds = _.range(arrayOfObjectsOfArrays.length);
   let rowIds = [];
   arrayOfObjectsOfArrays.forEach(object => rowIds.push(_.range(object[rowsField].length)));
