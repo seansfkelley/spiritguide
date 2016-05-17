@@ -3,6 +3,7 @@ import { View, Text, ListView, Switch, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
 import { ingredient } from './propTypes';
+import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
 import {
   rowAndSectionIdentities,
   getSectionData,
@@ -56,6 +57,9 @@ export default class IngredientConfigurator extends React.Component {
           style={styles.rowSwitch}
           value={rowData.isEnabled}
           onValueChange={this.props.onIngredientStateChange.bind(null, rowData.ingredient.tag)}
+          thumbTintColor='#bbb'
+          tintColor='#444'
+          onTintColor='#999'
         />
       </View>
     );
@@ -64,7 +68,7 @@ export default class IngredientConfigurator extends React.Component {
   _renderSectionHeader = (sectionData, sectionId) => {
     return (
       <View style={styles.header}>
-        <Text style={styles.headerText}>{sectionData.name}</Text>
+        <Text style={styles.headerText}>{sectionData.name.toUpperCase()}</Text>
       </View>
     );
   };
@@ -102,18 +106,32 @@ const styles = StyleSheet.create({
 
   },
   row: {
-
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#4a4a4a',
+    borderBottomWidth: 1,
+    borderBottomColor: '#434343'
   },
   rowText: {
-
+    color: '#eee',
+    fontSize: 16,
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
   },
   rowSwitch: {
 
   },
   header: {
-
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: '#393939'
   },
   headerText: {
-
+    color: '#a8a8a8',
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
   }
 });
