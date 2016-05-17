@@ -47,16 +47,13 @@ class App extends React.Component {
 
   render() {
     if (this.props.initialLoadComplete) {
-      const menu = <IngredientConfigurator groupedIngredients={this.props.groupedIngredients}/>;
       return (
-        <SideMenu menu={menu}>
-          <Navigator
-            initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 1, rowIndex: 7 }}
-            configureScene={this._configureScene}
-            renderScene={this._renderScene}
-            sceneStyle={styles.navigator}
-          />
-        </SideMenu>
+        <Navigator
+          initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 1, rowIndex: 7 }}
+          configureScene={this._configureScene}
+          renderScene={this._renderScene}
+          sceneStyle={styles.navigator}
+        />
       );
     } else {
       return (
@@ -83,19 +80,22 @@ class App extends React.Component {
   _renderScene = (route, navigator) => {
     switch (route.type) {
       case RouteType.RECIPE_LIST:
+        const menu = <IngredientConfigurator groupedIngredients={this.props.groupedIngredients}/>;
         return (
-          <View style={styles.container}>
-            <View style={styles.statusBarSpacer}/>
-            <StatusBar hidden={false}/>
-            <SwipeSelector
-              options={BASE_LIQUORS.map(l => ({ label: l, value: l }))}
-              onSelect={console.log.bind(console)}
-            />
-            <RecipeList
-              groupedRecipes={this.props.groupedAlphabeticalRecipes}
-              onPress={this._onRecipePress.bind(this, navigator)}
-            />
-          </View>
+          <SideMenu menu={menu}>
+            <View style={styles.container}>
+              <View style={styles.statusBarSpacer}/>
+              <StatusBar hidden={false}/>
+              <SwipeSelector
+                options={BASE_LIQUORS.map(l => ({ label: l, value: l }))}
+                onSelect={console.log.bind(console)}
+              />
+              <RecipeList
+                groupedRecipes={this.props.groupedAlphabeticalRecipes}
+                onPress={this._onRecipePress.bind(this, navigator)}
+              />
+            </View>
+          </SideMenu>
         );
 
       case RouteType.RECIPE_CARDS:
