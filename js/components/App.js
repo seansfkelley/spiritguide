@@ -56,7 +56,6 @@ class App extends React.Component {
           initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 1, rowIndex: 7 }}
           configureScene={this._configureScene}
           renderScene={this._renderScene}
-          sceneStyle={styles.navigator}
         />
       );
     } else {
@@ -88,6 +87,7 @@ class App extends React.Component {
           groupedIngredients={this.props.groupedIngredients}
           selectedIngredientTags={this.props.selectedIngredientTags}
           onIngredientStateChange={this._onIngredientToggle}
+          style={styles.ingredientSidebar}
         />;
         return (
           <SideMenu
@@ -152,7 +152,8 @@ class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: 'white'
   },
   statusBarSpacer: {
     height: IOS_STATUS_BAR_HEIGHT
@@ -162,8 +163,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  navigator: {
-    backgroundColor: 'white'
+  ingredientSidebar: {
+    paddingTop: IOS_STATUS_BAR_HEIGHT
   }
 });
 

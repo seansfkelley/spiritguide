@@ -18,7 +18,8 @@ export default class IngredientConfigurator extends React.Component {
       ingredients: React.PropTypes.arrayOf(ingredient).isRequired
     })).isRequired,
     selectedIngredientTags: React.PropTypes.objectOf(React.PropTypes.bool).isRequired,
-    onIngredientStateChange: React.PropTypes.func.isRequired
+    onIngredientStateChange: React.PropTypes.func.isRequired,
+    style: View.propTypes.style
   };
 
   state = {
@@ -35,7 +36,7 @@ export default class IngredientConfigurator extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[ styles.container, this.props.style ]}>
         <ListView
           style={styles.list}
           dataSource={this.state.dataSource}
