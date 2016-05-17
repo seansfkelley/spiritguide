@@ -18,7 +18,8 @@ export function _computeIngredientsByTag(ingredients) {
       log.trace(`ingredient ${i.tag} refers to unknown generic ${i.generic}; inferring generic`);
       ingredientsByTag[i.generic] = normalizeIngredient({
         tag: i.generic,
-        display: `[inferred] ${i.generic}`
+        display: `[inferred] ${i.generic}`,
+        tangible: false
       });
     }
   });

@@ -5,11 +5,22 @@ const LEGAL_BASE_LIQUORS = BASE_LIQUORS.concat([ UNASSIGNED_BASE_LIQUOR ]);
 
 const {
   arrayOf,
+  bool,
   oneOf,
   oneOfType,
   shape,
   string
 } = React.PropTypes;
+
+export const ingredient = shape({
+  display: string.isRequired,
+  group: string,
+  tangible: bool,
+  tag: string,
+  generic: string,
+  difficulty: oneOf([ 'easy', 'medium', 'hard' ]),
+  searchable: arrayOf(string)
+});
 
 export const measuredIngredient = shape({
   displayIngredient: string.isRequired,

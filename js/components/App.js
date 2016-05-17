@@ -15,13 +15,15 @@ import enumeration from '../util/enum';
 import { IOS_STATUS_BAR_HEIGHT } from './constants';
 import {
   selectAlphabeticalRecipes,
-  selectGroupedAlphabeticalRecipes
+  selectGroupedAlphabeticalRecipes,
+  selectGroupedIngredients
 } from '../store/selectors';
 import { BASE_LIQUORS } from '../definitions';
-import { recipe } from './propTypes';
+import { recipe, ingredient } from './propTypes';
 import SwipeSelector from './SwipeSelector';
 import RecipeList from './RecipeList';
 import SwipableRecipeCards from './SwipableRecipeCards';
+import IngredientConfigurator from './IngredientConfigurator';
 
 const RouteType = enumeration(
   'RECIPE_LIST',
@@ -37,11 +39,15 @@ class App extends React.Component {
       groupName: React.PropTypes.string.isRequired,
       recipes: React.PropTypes.arrayOf(recipe).isRequired
     })).isRequired,
+    groupedIngredients: React.PropTypes.arrayOf(React.PropTypes.shape({
+      name: React.PropTypes.string.isRequired,
+      ingredients: React.PropTypes.arrayOf(ingredient).isRequired
+    })).isRequired
   };
 
   render() {
     if (this.props.initialLoadComplete) {
-      const menu = <Text>butts</Text>;
+      const menu = <IngredientConfigurator groupedIngredients={this.props.groupedIngredients}/>;
       return (
         <SideMenu menu={menu}>
           <Navigator
@@ -141,7 +147,8 @@ function mapStateToProps(state) {
   return {
     initialLoadComplete: state.app.initialLoadComplete,
     alphabeticalRecipes: selectAlphabeticalRecipes(state),
-    groupedAlphabeticalRecipes: selectGroupedAlphabeticalRecipes(state)
+    groupedAlphabeticalRecipes: selectGroupedAlphabeticalRecipes(state),
+    groupedIngredients: selectGroupedIngredients(state)
   };
 }
 

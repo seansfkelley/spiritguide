@@ -39,8 +39,11 @@ export const initializeStore = _.once(() => {
   .then(recipeIds => {
     return Promise.all([
       store.dispatch(loadRecipes(recipeIds)),
-      store.dispatch(loadIngredientGroups()),
-      store.dispatch(loadIngredientsByTag())
+      // These two have an ordering constraint.
+      store.dispatch(loadIngredientGroups())
+      .then(() => {
+        return store.dispatch(loadIngredientsByTag())
+      })
     ]);
   })
   .then(() => {
