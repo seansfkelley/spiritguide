@@ -101,7 +101,7 @@ class App extends React.Component {
               };
             }}
           >
-            <View style={styles.container}>
+            <View style={[ styles.container, styles.dropShadow ]}>
               <View style={styles.statusBarSpacer}/>
               <StatusBar hidden={false}/>
               <SwipeSelector
@@ -154,6 +154,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white'
+  },
+  dropShadow: {
+    shadowColor: 'black',
+    shadowRadius: 2,
+    shadowOffset: { width: -2, height: 0 },
+    shadowOpacity: 0.5
   },
   statusBarSpacer: {
     height: IOS_STATUS_BAR_HEIGHT
