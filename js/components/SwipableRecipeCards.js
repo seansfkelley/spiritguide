@@ -3,7 +3,7 @@ import { View, ScrollView, Text, StyleSheet, Dimensions } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
 import { recipe } from './propTypes';
-import RecipeCard from './RecipeCard';
+import RecipeCard from './dumb/RecipeCard';
 
 const OVERFLOW_VISIBLE = 30;
 const INTER_CARD_SPACING = 8;

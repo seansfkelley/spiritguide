@@ -5,7 +5,7 @@ import PureRender from 'pure-render-decorator';
 import {
   DEFAULT_SERIF_FONT_FAMILY,
   DEFAULT_SANS_SERIF_FONT_FAMILY
-} from './constants';
+} from '../constants';
 
 @PureRender
 export default class InstructionStep extends React.Component {

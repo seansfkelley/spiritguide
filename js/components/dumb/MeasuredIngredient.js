@@ -2,8 +2,8 @@ import React from 'react';
 import { View, ListView, Text, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
-import { measuredIngredient } from './propTypes';
-import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
+import { measuredIngredient } from '../propTypes';
+import { DEFAULT_SANS_SERIF_FONT_FAMILY } from '../constants';
 import { fractionify } from '../util/format';
 
 @PureRender

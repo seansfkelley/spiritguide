@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
-import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
+import { shallowEqualHasChanged } from '../util/listViewDataSourceUtils';
 
 @PureRender
 export default class SwipeSelector extends React.Component {

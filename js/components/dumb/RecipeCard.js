@@ -3,9 +3,9 @@ import React from 'react';
 import { View, ListView, ScrollView, Text, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
-import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
-import { recipe } from './propTypes';
-import { DEFAULT_SERIF_FONT_FAMILY } from './constants';
+import { shallowEqualHasChanged } from '../util/listViewDataSourceUtils';
+import { recipe } from '../propTypes';
+import { DEFAULT_SERIF_FONT_FAMILY } from '../constants';
 import MeasuredIngredient from './MeasuredIngredient';
 import InstructionStep from './InstructionStep';
 

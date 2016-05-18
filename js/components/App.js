@@ -27,7 +27,7 @@ import {
 import * as filterActions from '../store/actions/filterActions';
 import { ANY_BASE_LIQUOR, BASE_LIQUORS } from '../definitions';
 import { recipe, ingredient } from './propTypes';
-import SwipeSelector from './SwipeSelector';
+import SwipeSelector from './dumb/SwipeSelector';
 import RecipeList from './RecipeList';
 import SwipableRecipeCards from './SwipableRecipeCards';
 import IngredientConfigurator from './IngredientConfigurator';
@@ -102,6 +102,7 @@ class App extends React.Component {
         return (
           <SideMenu
             menu={menu}
+            bounceBackOnOverdraw={false}
             overlayAnimationStyle={(value, maxValue) => {
               return {
                 backgroundColor: value.interpolate({
