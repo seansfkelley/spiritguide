@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ListView, Text, StyleSheet } from 'react-native';
+import { View, ListView, Text, Dimensions, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
 function rowHasChanged(r1, r2) {
@@ -13,8 +13,11 @@ export default class SwipeSelector extends React.Component {
       label: React.PropTypes.string.isRequired,
       value: React.PropTypes.string.isRequired
     })).isRequired,
-    onSelect: React.PropTypes.func.isRequired,
-    initialIndex: React.PropTypes.number
+    onOptionSelect: React.PropTypes.func.isRequired,
+    optionWidth: React.PropTypes.number.isRequired,
+    optionStyle: Text.propTypes.style,
+    initialIndex: React.PropTypes.number,
+    style: View.propTypes.style
   };
 
   state = {
@@ -28,14 +31,20 @@ export default class SwipeSelector extends React.Component {
   }
 
   render() {
+    // TODO: Is there a way we can compute something like `calc(50% - (optionWidth / 2))`?
+    const { width } = Dimensions.get('window');
+    const paddingHorizontal = (width - this.props.optionWidth) / 2;
     return (
-      <View style={styles.container}>
+      <View style={[ styles.container, this.props.style ]}>
         <ListView
           style={styles.list}
+          contentContainerStyle={{ paddingHorizontal }}
           dataSource={this.state.dataSource}
           renderRow={this._renderRow}
           horizontal={true}
-          pagingEnabled={true}
+          snapToAlignment='start'
+          snapToInterval={this.props.optionWidth}
+          decelerationRate='fast'
           showsHorizontalScrollIndicator={false}
         />
       </View>
@@ -44,8 +53,8 @@ export default class SwipeSelector extends React.Component {
 
   _renderRow = (rowData, sectionId, rowId) => {
     return (
-      <View style={styles.option}>
-        <Text style={styles.optionText}>{rowData.label}</Text>
+      <View style={[ styles.option, { width: this.props.optionWidth } ]}>
+        <Text style={[ styles.optionText, this.props.optionStyle ]}>{rowData.label}</Text>
       </View>
     );
   };
@@ -61,15 +70,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   list: {
-    width: 200,
-    overflow: 'visible'
   },
   option: {
-    width: 200,
     justifyContent: 'center',
     alignItems: 'center'
   },
   optionText: {
+    flex: 1,
     paddingVertical: 8,
     paddingHorizontal: 16
   }

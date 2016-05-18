@@ -13,7 +13,12 @@ import PureRender from 'pure-render-decorator';
 import SideMenu from 'react-native-side-menu';
 
 import enumeration from '../util/enum';
-import { IOS_STATUS_BAR_HEIGHT } from './constants';
+import {
+  IOS_STATUS_BAR_HEIGHT,
+  DEFAULT_SANS_SERIF_FONT_FAMILY,
+  IOS_STATUS_BAR_BACKGROUND_COLOR,
+  IOS_STATUS_BAR_STYLE
+} from './constants';
 import {
   selectAlphabeticalRecipes,
   selectGroupedAlphabeticalRecipes,
@@ -103,10 +108,13 @@ class App extends React.Component {
           >
             <View style={[ styles.container, styles.dropShadow ]}>
               <View style={styles.statusBarSpacer}/>
-              <StatusBar hidden={false}/>
+              <StatusBar hidden={false} barStyle={IOS_STATUS_BAR_STYLE}/>
               <SwipeSelector
-                options={BASE_LIQUORS.map(l => ({ label: l, value: l }))}
-                onSelect={console.log.bind(console)}
+                style={styles.baseSelector}
+                options={BASE_LIQUORS.map(l => ({ label: l.toUpperCase(), value: l }))}
+                optionWidth={125}
+                optionStyle={styles.baseSelectorOption}
+                onOptionSelect={console.log.bind(console)}
               />
               <RecipeList
                 groupedRecipes={this.props.groupedAlphabeticalRecipes}
@@ -122,7 +130,7 @@ class App extends React.Component {
           .reduce((a, b) => a + b, 0) + route.rowIndex;
         return (
           <View style={styles.container}>
-            <StatusBar hidden={true}/>
+            <StatusBar hidden={true} barStyle={IOS_STATUS_BAR_STYLE}/>
             <SwipableRecipeCards
               recipes={this.props.alphabeticalRecipes}
               initialIndex={initialIndex}
@@ -162,7 +170,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5
   },
   statusBarSpacer: {
-    height: IOS_STATUS_BAR_HEIGHT
+    height: IOS_STATUS_BAR_HEIGHT,
+    backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
   },
   loadingContainer: {
     flex: 1,
@@ -170,7 +179,18 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   ingredientSidebar: {
-    paddingTop: IOS_STATUS_BAR_HEIGHT
+    paddingTop: IOS_STATUS_BAR_HEIGHT,
+    backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
+  },
+  baseSelector: {
+    backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
+  },
+  baseSelectorOption: {
+    backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR,
+    color: '#ddd',
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY,
+    fontSize: 16,
+    fontWeight: '600'
   }
 });
 
