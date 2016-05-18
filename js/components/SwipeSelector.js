@@ -27,6 +27,10 @@ export default class SwipeSelector extends React.Component {
     style: View.propTypes.style
   };
 
+  static defaultProps = {
+    initialIndex: 0
+  };
+
   state = {
     dataSource: this._recomputeDataSource(null, this.props.options)
   };
@@ -35,6 +39,14 @@ export default class SwipeSelector extends React.Component {
     if (this.props.options !== props.options) {
       this.setState({ dataSource: this._recomputeDataSource(this.state.dataSource, props.options) });
     }
+    if (props.initialIndex !== this.props.initialIndex) {
+      this._scrollToIndex(props.initialIndex, false);
+    }
+  }
+
+  componentDidMount() {
+    this._lastIndexCalledBack = this.props.initialIndex;
+    this._scrollToIndex(this.props.initialIndex, false);
   }
 
   render() {
@@ -67,7 +79,7 @@ export default class SwipeSelector extends React.Component {
 
   _renderRow = (rowData, sectionId, rowId) => {
     return (
-      <TouchableWithoutFeedback onPress={this._scrollToIndex.bind(null, +rowId)}>
+      <TouchableWithoutFeedback onPress={this._scrollToIndex.bind(null, +rowId, true)}>
         <View style={[ styles.option, { width: this.props.optionWidth } ]}>
           <Text style={[ styles.optionText, this.props.optionStyle ]}>{rowData.label}</Text>
         </View>
@@ -75,13 +87,20 @@ export default class SwipeSelector extends React.Component {
     );
   };
 
-  _scrollToIndex = (index) => {
-    this.refs.list.scrollTo({ x: this._computeHorizontalPadding() + (index - 1) * this.props.optionWidth});
+  _scrollToIndex = (index, animated) => {
+    this.refs.list.scrollTo({
+      x: this._computeHorizontalPadding() + (index - 1) * this.props.optionWidth,
+      animated
+    });
   };
 
   _onScroll = (event) => {
     // TODO: Does react-native guarantee that it will fire an event when/after the scroll ends?
-    console.log(event.nativeEvent);
+    const index = Math.floor(event.nativeEvent.contentOffset.x / this.props.optionWidth);
+    if (index !== this._lastIndexCalledBack) {
+      this._lastIndexCalledBack = index;
+      this.props.onOptionSelect(this.props.options[index].value);
+    }
   };
 
   _recomputeDataSource(dataSource, options) {
