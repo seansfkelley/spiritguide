@@ -92,6 +92,7 @@ export default class SwipeSelector extends React.Component {
       x: this._computeHorizontalPadding() + (index - 1) * this.props.optionWidth,
       animated
     });
+    this.props.onOptionSelect(this.props.options[index].value);
   };
 
   _onScroll = (event) => {

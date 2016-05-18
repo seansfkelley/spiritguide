@@ -1,11 +1,45 @@
 import _ from 'lodash';
 import { createSelector } from 'reselect';
 
+import { ANY_BASE_LIQUOR } from '../definitions';
+
+// hee hee
+function nofilter() {
+  return true;
+}
+
+function makeBaseLiquorFilterer(baseLiquor) {
+  if (baseLiquor === ANY_BASE_LIQUOR) {
+    return nofilter;
+  } else {
+    return (recipe) => {
+      if (_.isString(recipe.base)) {
+        return recipe.base == baseLiquor;
+      } else if (_.isArray(recipe.base)) {
+        return recipe.base.indexOf(baseLiquor) !== -1;
+      } else {
+        log.warn(`recipe '${recipe.name}' has a non-string, non-array base: ${recipe.base}`);
+        return false;
+      }
+    };
+  }
+}
+
+const selectBaseLiquorFilter = (state) => state.filters.baseLiquorFilter;
+
 const selectRecipesById = (state) => state.recipes.recipesById;
 
 export const selectAlphabeticalRecipes = createSelector(
   selectRecipesById,
   (recipesById) => _.chain(recipesById).values().sortBy('sortName').value()
+);
+
+export const selectFilteredAlphabeticalRecipes = createSelector(
+  selectBaseLiquorFilter,
+  selectAlphabeticalRecipes,
+  (baseLiquorFilter, alphabeticalRecipes) => {
+    return alphabeticalRecipes.filter(makeBaseLiquorFilterer(baseLiquorFilter));
+  }
 );
 
 export const selectGroupedAlphabeticalRecipes = createSelector(
@@ -25,6 +59,19 @@ export const selectGroupedAlphabeticalRecipes = createSelector(
       }
     })
     return groups;
+  }
+);
+
+export const selectFilteredGroupedAlphabeticalRecipes = createSelector(
+  selectBaseLiquorFilter,
+  selectGroupedAlphabeticalRecipes,
+  (baseLiquorFilter, groupedAlphabeticalRecipes) => {
+    return groupedAlphabeticalRecipes
+    .map(group => ({
+      groupName: group.groupName,
+      recipes: group.recipes.filter(makeBaseLiquorFilterer(baseLiquorFilter))
+    }))
+    .filter(({ recipes }) => recipes.length > 0);
   }
 );
 

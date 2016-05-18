@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, ListView, Text, TouchableHighlight, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
-import memoize from 'memoizee';
 
 import { recipe } from './propTypes';
 import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
 import {
   rowAndSectionIdentities,
   getSectionData,
-  makeGetRowData
+  makeGetRowData,
+  shallowEqualHasChanged
 } from './util/listViewDataSourceUtils';
 
 @PureRender
@@ -21,16 +21,23 @@ export default class RecipeList extends React.Component {
     onPress: React.PropTypes.func.isRequired
   };
 
-  constructor() {
-    super();
-    this._getDataSource = memoize(this._getDataSource, { max: 1 });
+  state = {
+    dataSource: this._recomputeDataSource(null, this.props.groupedRecipes)
+  };
+
+  componentWillReceiveProps(props) {
+    if (this.props.groupedRecipes !== props.groupedRecipes) {
+      this.setState({
+        dataSource: this._recomputeDataSource(this.state.dataSource, props.groupedRecipes)
+      });
+    }
   }
 
   render() {
     return (
       <ListView
         styles={styles.recipeList}
-        dataSource={this._getDataSource(this.props.groupedRecipes)}
+        dataSource={this.state.dataSource}
         renderRow={this._renderRow}
         renderSectionHeader={this._renderSectionHeader}
         initialListSize={15}
@@ -58,17 +65,15 @@ export default class RecipeList extends React.Component {
     );
   };
 
-  _getDataSource = (groupedRecipes) => {
+  _recomputeDataSource(dataSource, groupedRecipes) {
     const { sectionIds, rowIds } = rowAndSectionIdentities(groupedRecipes, 'recipes');
-    return new ListView.DataSource({
-      // TODO: Make these functions smarter.
-      // TODO: Memoizing this is wrong; we want to be able to take advantage of the diffing behavior
-      // that allows you to create new DataSources from old ones.
-      rowHasChanged: (r1, r2) => r1 !== r2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
+    return (dataSource || new ListView.DataSource({
+      rowHasChanged: shallowEqualHasChanged,
+      sectionHeaderHasChanged: shallowEqualHasChanged,
       getSectionData,
       getRowData: makeGetRowData('recipes')
-    }).cloneWithRowsAndSections(groupedRecipes, sectionIds, rowIds);
+    }))
+    .cloneWithRowsAndSections(groupedRecipes, sectionIds, rowIds);
   };
 }
 

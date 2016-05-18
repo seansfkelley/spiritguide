@@ -6,3 +6,10 @@ export function setSelectedIngredientTags(payload) {
     payload
   };
 }
+
+export function setBaseLiquorFilter(payload) {
+  return {
+    type: ActionType.SET_BASE_LIQUOR_FILTER,
+    payload
+  };
+}

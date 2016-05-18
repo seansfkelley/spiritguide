@@ -20,12 +20,12 @@ import {
   IOS_STATUS_BAR_STYLE
 } from './constants';
 import {
-  selectAlphabeticalRecipes,
-  selectGroupedAlphabeticalRecipes,
+  selectFilteredAlphabeticalRecipes,
+  selectFilteredGroupedAlphabeticalRecipes,
   selectGroupedIngredients
 } from '../store/selectors';
 import * as filterActions from '../store/actions/filterActions';
-import { BASE_LIQUORS } from '../definitions';
+import { ANY_BASE_LIQUOR, BASE_LIQUORS } from '../definitions';
 import { recipe, ingredient } from './propTypes';
 import SwipeSelector from './SwipeSelector';
 import RecipeList from './RecipeList';
@@ -37,12 +37,17 @@ const RouteType = enumeration(
   'RECIPE_CARDS'
 );
 
+const BASE_LIQUOR_OPTIONS = [ ANY_BASE_LIQUOR ].concat(BASE_LIQUORS).map(l => ({
+  label: l.toUpperCase(),
+  value: l
+}));
+
 @PureRender
 class App extends React.Component {
   static propTypes = {
     initialLoadComplete: React.PropTypes.bool.isRequired,
-    alphabeticalRecipes: React.PropTypes.arrayOf(recipe).isRequired,
-    groupedAlphabeticalRecipes: React.PropTypes.arrayOf(React.PropTypes.shape({
+    filteredAlphabeticalRecipes: React.PropTypes.arrayOf(recipe).isRequired,
+    filteredGroupedAlphabeticalRecipes: React.PropTypes.arrayOf(React.PropTypes.shape({
       groupName: React.PropTypes.string.isRequired,
       recipes: React.PropTypes.arrayOf(recipe).isRequired
     })).isRequired,
@@ -111,13 +116,13 @@ class App extends React.Component {
               <StatusBar hidden={false} barStyle={IOS_STATUS_BAR_STYLE}/>
               <SwipeSelector
                 style={styles.baseSelector}
-                options={BASE_LIQUORS.map(l => ({ label: l.toUpperCase(), value: l }))}
+                options={BASE_LIQUOR_OPTIONS}
                 optionWidth={125}
                 optionStyle={styles.baseSelectorOption}
-                onOptionSelect={console.log.bind(console)}
+                onOptionSelect={this._onBaseLiquorChange}
               />
               <RecipeList
-                groupedRecipes={this.props.groupedAlphabeticalRecipes}
+                groupedRecipes={this.props.filteredGroupedAlphabeticalRecipes}
                 onPress={this._onRecipePress.bind(this, navigator)}
               />
             </View>
@@ -125,14 +130,14 @@ class App extends React.Component {
         );
 
       case RouteType.RECIPE_CARDS:
-        const initialIndex = this.props.groupedAlphabeticalRecipes.slice(0, route.sectionIndex)
+        const initialIndex = this.props.filteredGroupedAlphabeticalRecipes.slice(0, route.sectionIndex)
           .map(section => section.recipes.length)
           .reduce((a, b) => a + b, 0) + route.rowIndex;
         return (
           <View style={styles.container}>
             <StatusBar hidden={true} barStyle={IOS_STATUS_BAR_STYLE}/>
             <SwipableRecipeCards
-              recipes={this.props.alphabeticalRecipes}
+              recipes={this.props.filteredAlphabeticalRecipes}
               initialIndex={initialIndex}
             />
           </View>
@@ -155,6 +160,10 @@ class App extends React.Component {
     this.props.filterActions.setSelectedIngredientTags({
       [tag]: state
     });
+  };
+
+  _onBaseLiquorChange = (type) => {
+    this.props.filterActions.setBaseLiquorFilter(type);
   };
 }
 
@@ -197,8 +206,8 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
   return {
     initialLoadComplete: state.app.initialLoadComplete,
-    alphabeticalRecipes: selectAlphabeticalRecipes(state),
-    groupedAlphabeticalRecipes: selectGroupedAlphabeticalRecipes(state),
+    filteredAlphabeticalRecipes: selectFilteredAlphabeticalRecipes(state),
+    filteredGroupedAlphabeticalRecipes: selectFilteredGroupedAlphabeticalRecipes(state),
     groupedIngredients: selectGroupedIngredients(state),
     selectedIngredientTags: state.filters.selectedIngredientTags
   };
