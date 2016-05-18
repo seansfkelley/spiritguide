@@ -75,6 +75,8 @@ export const selectFilteredGroupedAlphabeticalRecipes = createSelector(
   }
 );
 
+export const selectSelectedIngredientTags = (state) => state.filters.selectedIngredientTags;
+
 export const selectIngredientsByTag = (state) => state.ingredients.ingredientsByTag;
 
 export const selectOrderedIngredientGroups = (state) => state.ingredients.orderedIngredientGroups;

@@ -10,6 +10,10 @@ import {
   makeGetRowData,
   shallowEqualHasChanged
 } from './util/listViewDataSourceUtils';
+import {
+  selectGroupedIngredients,
+  selectSelectedIngredientTags
+} from '../store/selectors';
 
 @PureRender
 export default class IngredientConfigurator extends React.Component {
@@ -19,7 +23,6 @@ export default class IngredientConfigurator extends React.Component {
       ingredients: React.PropTypes.arrayOf(ingredient).isRequired
     })).isRequired,
     selectedIngredientTags: React.PropTypes.objectOf(React.PropTypes.bool).isRequired,
-    onIngredientStateChange: React.PropTypes.func.isRequired,
     style: View.propTypes.style
   };
 
@@ -135,3 +138,18 @@ const styles = StyleSheet.create({
     fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
   }
 });
+
+function mapStateToProps(state) {
+  return {
+    groupedIngredients: selectGroupedIngredients(state),
+    selectedIngredientTags: selectSelectedIngredientTags(state)
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    filterActions: bindActionCreators(filterActions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
