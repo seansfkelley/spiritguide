@@ -45,7 +45,6 @@ export default class SwipeSelector extends React.Component {
   }
 
   componentDidMount() {
-    this._lastIndexCalledBack = this.props.initialIndex;
     this._scrollToIndex(this.props.initialIndex, false);
   }
 
@@ -92,15 +91,18 @@ export default class SwipeSelector extends React.Component {
       x: this._computeHorizontalPadding() + (index - 1) * this.props.optionWidth,
       animated
     });
+    this._lastIndexCalledBack = index;
     this.props.onOptionSelect(this.props.options[index].value);
   };
 
   _onScroll = (event) => {
     // TODO: Does react-native guarantee that it will fire an event when/after the scroll ends?
     const index = Math.floor(event.nativeEvent.contentOffset.x / this.props.optionWidth);
-    if (index !== this._lastIndexCalledBack) {
-      this._lastIndexCalledBack = index;
-      this.props.onOptionSelect(this.props.options[index].value);
+    // Overscroll could have us going past the ends.
+    const clampedIndex = Math.max(Math.min(index, this.props.options.length - 1), 0);
+    if (clampedIndex !== this._lastIndexCalledBack) {
+      this._lastIndexCalledBack = clampedIndex;
+      this.props.onOptionSelect(this.props.options[clampedIndex].value);
     }
   };
 
