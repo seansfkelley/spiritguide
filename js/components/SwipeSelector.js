@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, ListView, Text, Dimensions, StyleSheet } from 'react-native';
+import {
+  View,
+  ListView,
+  Text,
+  TouchableWithoutFeedback,
+  Dimensions,
+  StyleSheet
+} from 'react-native';
 import PureRender from 'pure-render-decorator';
 
 function rowHasChanged(r1, r2) {
@@ -31,9 +38,7 @@ export default class SwipeSelector extends React.Component {
   }
 
   render() {
-    // TODO: Is there a way we can compute something like `calc(50% - (optionWidth / 2))`?
-    const { width } = Dimensions.get('window');
-    const paddingHorizontal = (width - this.props.optionWidth) / 2;
+    const paddingHorizontal = this._computeHorizontalPadding();
     return (
       <View style={[ styles.container, this.props.style ]}>
         <ListView
@@ -46,17 +51,30 @@ export default class SwipeSelector extends React.Component {
           snapToInterval={this.props.optionWidth}
           decelerationRate='fast'
           showsHorizontalScrollIndicator={false}
+          ref='list'
         />
       </View>
     );
   }
 
+  _computeHorizontalPadding() {
+    // TODO: Is there a way we can compute something like `calc(50% - (optionWidth / 2))`?
+    const { width } = Dimensions.get('window');
+    return (width - this.props.optionWidth) / 2;
+  }
+
   _renderRow = (rowData, sectionId, rowId) => {
     return (
-      <View style={[ styles.option, { width: this.props.optionWidth } ]}>
-        <Text style={[ styles.optionText, this.props.optionStyle ]}>{rowData.label}</Text>
-      </View>
+      <TouchableWithoutFeedback onPress={this._scrollToIndex.bind(null, +rowId)}>
+        <View style={[ styles.option, { width: this.props.optionWidth } ]}>
+          <Text style={[ styles.optionText, this.props.optionStyle ]}>{rowData.label}</Text>
+        </View>
+      </TouchableWithoutFeedback>
     );
+  };
+
+  _scrollToIndex = (index) => {
+    this.refs.list.scrollTo({ x: this._computeHorizontalPadding() + (index - 1) * this.props.optionWidth});
   };
 
   _recomputeDataSource(dataSource, options) {
