@@ -9,9 +9,7 @@ import {
 } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
-function rowHasChanged(r1, r2) {
-  return r1 !== r2;
-}
+import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
 
 @PureRender
 export default class SwipeSelector extends React.Component {
@@ -23,6 +21,7 @@ export default class SwipeSelector extends React.Component {
     onOptionSelect: React.PropTypes.func.isRequired,
     optionWidth: React.PropTypes.number.isRequired,
     optionStyle: Text.propTypes.style,
+    selectedOptionStyle: Text.propTypes.style,
     initialIndex: React.PropTypes.number,
     style: View.propTypes.style
   };
@@ -32,15 +31,28 @@ export default class SwipeSelector extends React.Component {
   };
 
   state = {
-    dataSource: this._recomputeDataSource(null, this.props.options)
+    dataSource: this._recomputeDataSource(null, this.props.options, this.props.initialIndex),
+    currentIndex: this.props.initialIndex
   };
 
-  componentWillReceiveProps(props) {
-    if (this.props.options !== props.options) {
-      this.setState({ dataSource: this._recomputeDataSource(this.state.dataSource, props.options) });
+  componentWillReceiveProps(nextProps) {
+    let targetIndex = this.state.currentIndex;
+    if (nextProps.initialIndex !== this.props.initialIndex) {
+      targetIndex = nextProps.initialIndex;
+      this._scrollToIndex(targetIndex, false);
+      this.setState({ currentIndex: targetIndex });
     }
-    if (props.initialIndex !== this.props.initialIndex) {
-      this._scrollToIndex(props.initialIndex, false);
+
+    if (this.props.options !== nextProps.options) {
+      this.setState({
+        dataSource: this._recomputeDataSource(this.state.dataSource, nextProps.options, targetIndex)
+      });
+    }
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (nextState.currentIndex !== this.state.currentIndex) {
+      this.props.onOptionSelect(this.props.options[nextState.currentIndex].value);
     }
   }
 
@@ -50,6 +62,7 @@ export default class SwipeSelector extends React.Component {
 
   render() {
     const paddingHorizontal = this._computeHorizontalPadding();
+    // TODO: I don't want to have to get the scroll position every 16ms, but it seems to be the only way that is reliable.
     return (
       <View style={[ styles.container, this.props.style ]}>
         <ListView
@@ -63,7 +76,7 @@ export default class SwipeSelector extends React.Component {
           decelerationRate='fast'
           showsHorizontalScrollIndicator={false}
           onScroll={this._onScroll}
-          scrollEventThrottle={500}
+          scrollEventThrottle={16}
           ref='list'
         />
       </View>
@@ -80,7 +93,11 @@ export default class SwipeSelector extends React.Component {
     return (
       <TouchableWithoutFeedback onPress={this._scrollToIndex.bind(null, +rowId, true)}>
         <View style={[ styles.option, { width: this.props.optionWidth } ]}>
-          <Text style={[ styles.optionText, this.props.optionStyle ]}>{rowData.label}</Text>
+          <Text style={[
+            styles.optionText,
+            this.props.optionStyle,
+            rowData.isSelected ? this.props.selectedOptionStyle : null
+          ]}>{rowData.label}</Text>
         </View>
       </TouchableWithoutFeedback>
     );
@@ -91,24 +108,30 @@ export default class SwipeSelector extends React.Component {
       x: this._computeHorizontalPadding() + (index - 1) * this.props.optionWidth,
       animated
     });
-    this._lastIndexCalledBack = index;
-    this.props.onOptionSelect(this.props.options[index].value);
   };
 
   _onScroll = (event) => {
-    // TODO: Does react-native guarantee that it will fire an event when/after the scroll ends?
-    const index = Math.floor(event.nativeEvent.contentOffset.x / this.props.optionWidth);
+    const index = Math.floor(event.nativeEvent.contentOffset.x / this.props.optionWidth + 0.5);
     // Overscroll could have us going past the ends.
     const clampedIndex = Math.max(Math.min(index, this.props.options.length - 1), 0);
-    if (clampedIndex !== this._lastIndexCalledBack) {
-      this._lastIndexCalledBack = clampedIndex;
-      this.props.onOptionSelect(this.props.options[clampedIndex].value);
+    if (clampedIndex !== this.state.currentIndex) {
+      this.setState({
+        currentIndex: clampedIndex,
+        dataSource: this._recomputeDataSource(this.state.dataSource, this.props.options, clampedIndex)
+      });
     }
   };
 
-  _recomputeDataSource(dataSource, options) {
-    return (dataSource || new ListView.DataSource({ rowHasChanged }))
-    .cloneWithRows(options);
+  _recomputeDataSource(dataSource, options, currentIndex) {
+    const optionsWithSelectedState = options.map((option, i) => ({
+      label: option.label,
+      value: option.value,
+      isSelected: i === currentIndex
+    }));
+    return (dataSource || new ListView.DataSource({
+      rowHasChanged: shallowEqualHasChanged
+    }))
+    .cloneWithRows(optionsWithSelectedState);
   }
 }
 

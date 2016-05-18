@@ -119,6 +119,7 @@ class App extends React.Component {
                 options={BASE_LIQUOR_OPTIONS}
                 optionWidth={125}
                 optionStyle={styles.baseSelectorOption}
+                selectedOptionStyle={styles.selectedBaseSelectorOption}
                 onOptionSelect={this._onBaseLiquorChange}
               />
               <RecipeList
@@ -200,6 +201,10 @@ const styles = StyleSheet.create({
     fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY,
     fontSize: 16,
     fontWeight: '600'
+  },
+  selectedBaseSelectorOption: {
+    color: '#eee',
+    fontWeight: '700'
   }
 });
 
