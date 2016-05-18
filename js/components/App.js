@@ -27,7 +27,7 @@ import {
 import * as filterActions from '../store/actions/filterActions';
 import { ANY_BASE_LIQUOR, BASE_LIQUORS } from '../definitions';
 import { recipe, ingredient } from './propTypes';
-import SwipeSelector from './dumb/SwipeSelector';
+import BaseLiquorSelector from './BaseLiquorSelector';
 import RecipeList from './RecipeList';
 import SwipableRecipeCards from './SwipableRecipeCards';
 import IngredientConfigurator from './IngredientConfigurator';
@@ -115,14 +115,7 @@ class App extends React.Component {
             <View style={[ styles.container, styles.dropShadow ]}>
               <View style={styles.statusBarSpacer}/>
               <StatusBar hidden={false} barStyle={IOS_STATUS_BAR_STYLE}/>
-              <SwipeSelector
-                style={styles.baseSelector}
-                options={BASE_LIQUOR_OPTIONS}
-                optionWidth={125}
-                optionStyle={styles.baseSelectorOption}
-                selectedOptionStyle={styles.selectedBaseSelectorOption}
-                onOptionSelect={this._onBaseLiquorChange}
-              />
+              <BaseLiquorSelector/>
               <RecipeList
                 groupedRecipes={this.props.filteredGroupedAlphabeticalRecipes}
                 onPress={this._onRecipePress.bind(this, navigator)}
@@ -163,10 +156,6 @@ class App extends React.Component {
       [tag]: state
     });
   };
-
-  _onBaseLiquorChange = (type) => {
-    this.props.filterActions.setBaseLiquorFilter(type);
-  };
 }
 
 const styles = StyleSheet.create({
@@ -192,20 +181,6 @@ const styles = StyleSheet.create({
   ingredientSidebar: {
     paddingTop: IOS_STATUS_BAR_HEIGHT,
     backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
-  },
-  baseSelector: {
-    backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
-  },
-  baseSelectorOption: {
-    backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR,
-    color: '#ddd',
-    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY,
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  selectedBaseSelectorOption: {
-    color: '#eee',
-    fontWeight: '700'
   }
 });
 
