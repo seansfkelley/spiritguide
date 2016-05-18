@@ -51,6 +51,8 @@ export default class SwipeSelector extends React.Component {
           snapToInterval={this.props.optionWidth}
           decelerationRate='fast'
           showsHorizontalScrollIndicator={false}
+          onScroll={this._onScroll}
+          scrollEventThrottle={500}
           ref='list'
         />
       </View>
@@ -75,6 +77,11 @@ export default class SwipeSelector extends React.Component {
 
   _scrollToIndex = (index) => {
     this.refs.list.scrollTo({ x: this._computeHorizontalPadding() + (index - 1) * this.props.optionWidth});
+  };
+
+  _onScroll = (event) => {
+    // TODO: Does react-native guarantee that it will fire an event when/after the scroll ends?
+    console.log(event.nativeEvent);
   };
 
   _recomputeDataSource(dataSource, options) {
