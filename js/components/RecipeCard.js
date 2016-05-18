@@ -2,8 +2,8 @@ import _ from 'lodash';
 import React from 'react';
 import { View, ListView, ScrollView, Text, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
-import memoize from 'memoizee';
 
+import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
 import { recipe } from './propTypes';
 import { DEFAULT_SERIF_FONT_FAMILY } from './constants';
 import MeasuredIngredient from './MeasuredIngredient';
@@ -16,13 +16,20 @@ export default class RecipeCard extends React.Component {
     style: View.propTypes.style
   };
 
-  constructor() {
-    super();
-    this._getDataSources = memoize(this._getDataSources, { max: 1 });
+  state = {
+    dataSources: this._recomputeDataSources(null, this.props.recipe)
+  };
+
+  componentWillReceiveProps(props) {
+    if (this.props.recipe !== props.recipe) {
+      this.setState({
+        dataSources: this._recomputeDataSources(this.state.dataSources, props.recipe)
+      });
+    }
   }
 
   render() {
-    const { ingredients, instructions } = this._getDataSources(this.props.recipe);
+    const { ingredients, instructions } = this.state.dataSources;
 
     return (
       <View style={[ styles.card, this.props.style ]}>
@@ -47,16 +54,16 @@ export default class RecipeCard extends React.Component {
     );
   }
 
-  _getDataSources = (recipe) => {
-    const trivialHasChanged = (o1, o2) => o1 !== o2;
+  _recomputeDataSources(dataSources, recipe) {
+    const { ingredients, instructions } = (dataSources || {});
 
     return {
-      ingredients: new ListView.DataSource({
-        rowHasChanged: trivialHasChanged
-      }).cloneWithRows(recipe.ingredients),
-      instructions: new ListView.DataSource({
-        rowHasChanged: trivialHasChanged
-      }).cloneWithRows(recipe.instructions.split('\n').filter(_.identity))
+      ingredients: (ingredients || new ListView.DataSource({
+        rowHasChanged: shallowEqualHasChanged
+      })).cloneWithRows(recipe.ingredients),
+      instructions: (instructions || new ListView.DataSource({
+        rowHasChanged: shallowEqualHasChanged
+      })).cloneWithRows(recipe.instructions.split('\n').filter(_.identity))
     };
   };
 
