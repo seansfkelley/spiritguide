@@ -22,7 +22,7 @@ import {
 import {
   selectFilteredAlphabeticalRecipes,
   selectFilteredGroupedAlphabeticalRecipes,
-  selectGroupedIngredients,
+  selectFilteredGroupedIngredients,
   selectRecipeSearchTerm
 } from '../store/selectors';
 import * as filterActions from '../store/actions/filterActions';
@@ -52,7 +52,7 @@ class App extends React.Component {
       groupName: React.PropTypes.string.isRequired,
       recipes: React.PropTypes.arrayOf(recipe).isRequired
     })).isRequired,
-    groupedIngredients: React.PropTypes.arrayOf(React.PropTypes.shape({
+    filteredGroupedIngredients: React.PropTypes.arrayOf(React.PropTypes.shape({
       name: React.PropTypes.string.isRequired,
       ingredients: React.PropTypes.arrayOf(ingredient).isRequired
     })).isRequired,
@@ -96,9 +96,10 @@ class App extends React.Component {
     switch (route.type) {
       case RouteType.RECIPE_LIST:
         const menu = <IngredientConfigurator
-          groupedIngredients={this.props.groupedIngredients}
+          groupedIngredients={this.props.filteredGroupedIngredients}
           selectedIngredientTags={this.props.selectedIngredientTags}
           onIngredientStateChange={this._onIngredientToggle}
+          onSearchTermChange={this.props.filterActions.setIngredientSearchTerm}
           style={styles.ingredientSidebar}
         />;
         return (
@@ -220,7 +221,7 @@ function mapStateToProps(state) {
     initialLoadComplete: state.app.initialLoadComplete,
     filteredAlphabeticalRecipes: selectFilteredAlphabeticalRecipes(state),
     filteredGroupedAlphabeticalRecipes: selectFilteredGroupedAlphabeticalRecipes(state),
-    groupedIngredients: selectGroupedIngredients(state),
+    filteredGroupedIngredients: selectFilteredGroupedIngredients(state),
     selectedIngredientTags: state.filters.selectedIngredientTags,
     recipeSearchTerm: selectRecipeSearchTerm(state)
   };

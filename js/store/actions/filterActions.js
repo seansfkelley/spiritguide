@@ -7,6 +7,13 @@ export function setRecipeSearchTerm(payload) {
   };
 }
 
+export function setIngredientSearchTerm(payload) {
+  return {
+    type: ActionType.SET_INGREDIENT_SEARCH_TERM,
+    payload
+  };
+}
+
 export function setSelectedIngredientTags(payload) {
   return {
     type: ActionType.SET_SELECTED_INGREDIENT_TAGS,

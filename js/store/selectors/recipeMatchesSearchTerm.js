@@ -6,10 +6,6 @@ const WHITESPACE_REGEX = /\s+/g;
 
 // SO INEFFICIENT.
 export default function(recipe, searchTerm, ingredientsByTag){
-  if (!searchTerm) {
-    return false;
-  }
-
   assert(recipe);
   assert(ingredientsByTag);
 

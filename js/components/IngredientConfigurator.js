@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ListView, Switch, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
+import SearchBar from 'react-native-search-bar';
 
 import { ingredient } from './propTypes';
 import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
@@ -20,6 +21,7 @@ export default class IngredientConfigurator extends React.Component {
     })).isRequired,
     selectedIngredientTags: React.PropTypes.objectOf(React.PropTypes.bool).isRequired,
     onIngredientStateChange: React.PropTypes.func.isRequired,
+    onSearchTermChange: React.PropTypes.func.isRequired,
     style: View.propTypes.style
   };
 
@@ -38,6 +40,13 @@ export default class IngredientConfigurator extends React.Component {
   render() {
     return (
       <View style={[ styles.container, this.props.style ]}>
+        <SearchBar
+          onChangeText={this.props.onSearchTermChange}
+          placeholder='Ingredient name...'
+          barTintColor='#444'
+          searchBarStyle='minimal'
+          textColor='#eee'
+        />
         <ListView
           style={styles.list}
           dataSource={this.state.dataSource}
