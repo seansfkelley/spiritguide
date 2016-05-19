@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import assert from '../../shared/tinyassert';
+import assert from '../../../shared/tinyassert';
 
 const WHITESPACE_REGEX = /\s+/g;
 

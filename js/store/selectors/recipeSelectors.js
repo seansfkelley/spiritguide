@@ -1,18 +1,17 @@
 import _ from 'lodash';
 import { createSelector } from 'reselect';
 
-import { ANY_BASE_LIQUOR } from '../definitions';
+import { ANY_BASE_LIQUOR } from '../../definitions';
 import recipeMatchesSearchTerm from './recipeMatchesSearchTerm';
-
-export const selectBaseLiquorFilter = (state) => state.filters.baseLiquorFilter;
-export const selectRecipeSearchTerm = (state) => state.filters.recipeSearchTerm;
-export const selectIngredientsByTag = (state) => state.ingredients.ingredientsByTag;
-export const selectOrderedIngredientGroups = (state) => state.ingredients.orderedIngredientGroups;
-export const selectRecipesById = (state) => state.recipes.recipesById;
+import {
+  selectBaseLiquorFilter,
+  selectRecipeSearchTerm,
+  selectIngredientsByTag,
+  selectRecipesById
+} from './basicSelectors';
 
 // hee hee
 const _nofilter = () => true;
-const _displaySort = (i) => i.display.toLowerCase();
 
 const selectCreateBaseLiquorFilterer = createSelector(
   selectBaseLiquorFilter,
@@ -103,18 +102,3 @@ export const selectFilteredGroupedAlphabeticalRecipes = createSelector(
   }
 );
 
-export const selectGroupedIngredients = createSelector(
-  selectIngredientsByTag,
-  selectOrderedIngredientGroups,
-  (ingredientsByTag, orderedIngredientGroups) =>
-    _.chain(ingredientsByTag)
-      .filter('tangible')
-      .sortBy(_displaySort)
-      .groupBy('group')
-      .map((ingredients, groupTag) => ({
-        name: _.find(orderedIngredientGroups, { type: groupTag }).display,
-        ingredients
-      }))
-      .sortBy(({ name }) => _.findIndex(orderedIngredientGroups, { display: name }))
-      .value()
-)
