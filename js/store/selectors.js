@@ -25,9 +25,9 @@ function makeBaseLiquorFilterer(baseLiquor) {
   }
 }
 
-const selectBaseLiquorFilter = (state) => state.filters.baseLiquorFilter;
+export const selectBaseLiquorFilter = (state) => state.filters.baseLiquorFilter;
 
-const selectRecipesById = (state) => state.recipes.recipesById;
+export const selectRecipesById = (state) => state.recipes.recipesById;
 
 export const selectAlphabeticalRecipes = createSelector(
   selectRecipesById,

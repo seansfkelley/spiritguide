@@ -31,9 +31,8 @@ export default class RecipeList extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
-    if (this._pendingScrollTo) {
-      this.refs.list.scrollTo({ y: this._pendingScrollTo });
-      delete this._pendingScrollTo;
+    if (this._scrollBarHeight) {
+      this.refs.list.scrollTo({ y: this._scrollBarHeight });
     }
   }
 
@@ -91,11 +90,9 @@ export default class RecipeList extends React.Component {
   };
 
   _onSearchBarLayout = (event) => {
-    const scrollTo = event.nativeEvent.layout.height;
+    this._scrollBarHeight = event.nativeEvent.layout.height;
     if (this._isMounted) {
-      this.refs.list.scrollTo({ y: scrollTo, animated: false });
-    } else {
-      this._pendingScrollTo = scrollTo;
+      this.refs.list.scrollTo({ y: this._scrollBarHeight, animated: false });
     }
   };
 
@@ -114,6 +111,10 @@ export default class RecipeList extends React.Component {
     }))
     .cloneWithRowsAndSections(recipesWithSearchBarSentinel, sectionIds, rowIds);
   };
+
+  resetScroll() {
+    this.refs.list.scrollTo({ y: this._scrollBarHeight, animated: false });
+  }
 }
 
 const styles = StyleSheet.create({

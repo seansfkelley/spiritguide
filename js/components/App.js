@@ -125,6 +125,7 @@ class App extends React.Component {
               <RecipeList
                 groupedRecipes={this.props.filteredGroupedAlphabeticalRecipes}
                 onPress={this._onRecipePress.bind(this, navigator)}
+                ref={(c) => this._recipeList = c}
               />
             </View>
           </SideMenu>
@@ -165,6 +166,9 @@ class App extends React.Component {
 
   _onBaseLiquorChange = (type) => {
     this.props.filterActions.setBaseLiquorFilter(type);
+    if (this._recipeList) {
+      this._recipeList.resetScroll();
+    }
   };
 }
 
