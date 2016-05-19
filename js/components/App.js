@@ -109,7 +109,7 @@ class App extends React.Component {
               return {
                 backgroundColor: value.interpolate({
                   inputRange: [0, maxValue],
-                  outputRange: [ 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.2)' ]
+                  outputRange: [ 'rgba(0, 0, 0, 0)', 'rgba(0, 0, 0, 0.4)' ]
                 })
               };
             }}
