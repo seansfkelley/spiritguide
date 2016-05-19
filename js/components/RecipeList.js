@@ -22,7 +22,8 @@ export default class RecipeList extends React.Component {
       groupName: React.PropTypes.string.isRequired,
       recipes: React.PropTypes.arrayOf(recipe).isRequired
     })).isRequired,
-    onPress: React.PropTypes.func.isRequired
+    onPress: React.PropTypes.func.isRequired,
+    onSearchTermChange: React.PropTypes.func.isRequired
   };
 
   state = {
@@ -31,8 +32,8 @@ export default class RecipeList extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
-    if (this._scrollBarHeight) {
-      this.refs.list.scrollTo({ y: this._scrollBarHeight });
+    if (this._searchBarHeight) {
+      this.scrollToTop(false);
     }
   }
 
@@ -62,6 +63,8 @@ export default class RecipeList extends React.Component {
       return (
         <SearchBar
           onLayout={this._onSearchBarLayout}
+          onChangeText={this.props.onSearchTermChange}
+          placeholder='Name or ingredient...'
         />
       );
     } else {
@@ -90,9 +93,9 @@ export default class RecipeList extends React.Component {
   };
 
   _onSearchBarLayout = (event) => {
-    this._scrollBarHeight = event.nativeEvent.layout.height;
+    this._searchBarHeight = event.nativeEvent.layout.height;
     if (this._isMounted) {
-      this.refs.list.scrollTo({ y: this._scrollBarHeight, animated: false });
+      this.scrollToTop(false);
     }
   };
 
@@ -112,8 +115,11 @@ export default class RecipeList extends React.Component {
     .cloneWithRowsAndSections(recipesWithSearchBarSentinel, sectionIds, rowIds);
   };
 
-  resetScroll() {
-    this.refs.list.scrollTo({ y: this._scrollBarHeight, animated: false });
+  scrollToTop(showSearchBar) {
+    this.refs.list.scrollTo({
+      y: showSearchBar ? 0 : this._searchBarHeight,
+      animated: false
+    });
   }
 }
 

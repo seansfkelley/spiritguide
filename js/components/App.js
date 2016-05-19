@@ -22,7 +22,8 @@ import {
 import {
   selectFilteredAlphabeticalRecipes,
   selectFilteredGroupedAlphabeticalRecipes,
-  selectGroupedIngredients
+  selectGroupedIngredients,
+  selectRecipeSearchTerm
 } from '../store/selectors';
 import * as filterActions from '../store/actions/filterActions';
 import { ANY_BASE_LIQUOR, BASE_LIQUORS } from '../definitions';
@@ -56,7 +57,8 @@ class App extends React.Component {
       ingredients: React.PropTypes.arrayOf(ingredient).isRequired
     })).isRequired,
     selectedIngredientTags: React.PropTypes.objectOf(React.PropTypes.bool).isRequired,
-    filterActions: React.PropTypes.objectOf(React.PropTypes.func).isRequired
+    filterActions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
+    recipeSearchTerm: React.PropTypes.string.isRequired
   };
 
   render() {
@@ -125,6 +127,7 @@ class App extends React.Component {
               <RecipeList
                 groupedRecipes={this.props.filteredGroupedAlphabeticalRecipes}
                 onPress={this._onRecipePress.bind(this, navigator)}
+                onSearchTermChange={this.props.filterActions.setRecipeSearchTerm}
                 ref={(c) => this._recipeList = c}
               />
             </View>
@@ -167,7 +170,7 @@ class App extends React.Component {
   _onBaseLiquorChange = (type) => {
     this.props.filterActions.setBaseLiquorFilter(type);
     if (this._recipeList) {
-      this._recipeList.resetScroll();
+      this._recipeList.scrollToTop(!!this.props.recipeSearchTerm);
     }
   };
 }
@@ -218,7 +221,8 @@ function mapStateToProps(state) {
     filteredAlphabeticalRecipes: selectFilteredAlphabeticalRecipes(state),
     filteredGroupedAlphabeticalRecipes: selectFilteredGroupedAlphabeticalRecipes(state),
     groupedIngredients: selectGroupedIngredients(state),
-    selectedIngredientTags: state.filters.selectedIngredientTags
+    selectedIngredientTags: state.filters.selectedIngredientTags,
+    recipeSearchTerm: selectRecipeSearchTerm(state)
   };
 }
 

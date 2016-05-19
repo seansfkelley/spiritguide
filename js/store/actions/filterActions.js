@@ -1,5 +1,12 @@
 import ActionType from '../ActionType';
 
+export function setRecipeSearchTerm(payload) {
+  return {
+    type: ActionType.SET_RECIPE_SEARCH_TERM,
+    payload
+  };
+}
+
 export function setSelectedIngredientTags(payload) {
   return {
     type: ActionType.SET_SELECTED_INGREDIENT_TAGS,

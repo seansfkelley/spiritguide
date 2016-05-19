@@ -45,7 +45,8 @@ const INGREDIENT_SCHEMA = {
       type: 'array',
       required: false,
       items: {
-        type: 'string'
+        type: 'string',
+        conform: (s) => s === s.toLowerCase()
       }
     }
   }

@@ -2,32 +2,52 @@ import _ from 'lodash';
 import { createSelector } from 'reselect';
 
 import { ANY_BASE_LIQUOR } from '../definitions';
-
-// hee hee
-function nofilter() {
-  return true;
-}
-
-function makeBaseLiquorFilterer(baseLiquor) {
-  if (baseLiquor === ANY_BASE_LIQUOR) {
-    return nofilter;
-  } else {
-    return (recipe) => {
-      if (_.isString(recipe.base)) {
-        return recipe.base == baseLiquor;
-      } else if (_.isArray(recipe.base)) {
-        return recipe.base.indexOf(baseLiquor) !== -1;
-      } else {
-        log.warn(`recipe '${recipe.name}' has a non-string, non-array base: ${recipe.base}`);
-        return false;
-      }
-    };
-  }
-}
+import recipeMatchesSearchTerm from './recipeMatchesSearchTerm';
 
 export const selectBaseLiquorFilter = (state) => state.filters.baseLiquorFilter;
-
+export const selectRecipeSearchTerm = (state) => state.filters.recipeSearchTerm;
+export const selectIngredientsByTag = (state) => state.ingredients.ingredientsByTag;
+export const selectOrderedIngredientGroups = (state) => state.ingredients.orderedIngredientGroups;
 export const selectRecipesById = (state) => state.recipes.recipesById;
+
+// hee hee
+const _nofilter = () => true;
+const _displaySort = (i) => i.display.toLowerCase();
+
+const selectCreateBaseLiquorFilterer = createSelector(
+  selectBaseLiquorFilter,
+  (baseLiquor) => {
+    if (baseLiquor === ANY_BASE_LIQUOR) {
+      return _nofilter;
+    } else {
+      return (recipe) => {
+        if (_.isString(recipe.base)) {
+          return recipe.base == baseLiquor;
+        } else if (_.isArray(recipe.base)) {
+          return recipe.base.indexOf(baseLiquor) !== -1;
+        } else {
+          log.warn(`recipe '${recipe.name}' has a non-string, non-array base: ${recipe.base}`);
+          return false;
+        }
+      };
+    }
+  }
+);
+
+const selectCreateRecipeSearchTermFilterer = createSelector(
+  selectRecipeSearchTerm,
+  selectIngredientsByTag,
+  (searchTerm, ingredientsByTag) => {
+    searchTerm = searchTerm.trim();
+    if (searchTerm) {
+      return (recipe) => {
+        return recipeMatchesSearchTerm(recipe, searchTerm, ingredientsByTag);
+      };
+    } else {
+      return _nofilter;
+    }
+  }
+);
 
 export const selectAlphabeticalRecipes = createSelector(
   selectRecipesById,
@@ -35,10 +55,13 @@ export const selectAlphabeticalRecipes = createSelector(
 );
 
 export const selectFilteredAlphabeticalRecipes = createSelector(
-  selectBaseLiquorFilter,
   selectAlphabeticalRecipes,
-  (baseLiquorFilter, alphabeticalRecipes) => {
-    return alphabeticalRecipes.filter(makeBaseLiquorFilterer(baseLiquorFilter));
+  selectCreateBaseLiquorFilterer,
+  selectCreateRecipeSearchTermFilterer,
+  (alphabeticalRecipes, ...filterers) => {
+    let recipes = alphabeticalRecipes;
+    filterers.forEach(fn => { recipes = recipes.filter(fn) });
+    return recipes;
   }
 );
 
@@ -63,23 +86,22 @@ export const selectGroupedAlphabeticalRecipes = createSelector(
 );
 
 export const selectFilteredGroupedAlphabeticalRecipes = createSelector(
-  selectBaseLiquorFilter,
   selectGroupedAlphabeticalRecipes,
-  (baseLiquorFilter, groupedAlphabeticalRecipes) => {
+  selectCreateBaseLiquorFilterer,
+  selectCreateRecipeSearchTermFilterer,
+  (groupedAlphabeticalRecipes, ...filterers) => {
     return groupedAlphabeticalRecipes
-    .map(group => ({
-      groupName: group.groupName,
-      recipes: group.recipes.filter(makeBaseLiquorFilterer(baseLiquorFilter))
-    }))
+    .map(group => {
+      let recipes = group.recipes;
+      filterers.forEach(fn => { recipes = recipes.filter(fn)});
+      return {
+        groupName: group.groupName,
+        recipes
+      };
+    })
     .filter(({ recipes }) => recipes.length > 0);
   }
 );
-
-export const selectIngredientsByTag = (state) => state.ingredients.ingredientsByTag;
-
-export const selectOrderedIngredientGroups = (state) => state.ingredients.orderedIngredientGroups;
-
-const _displaySort = (i) => i.display.toLowerCase();
 
 export const selectGroupedIngredients = createSelector(
   selectIngredientsByTag,
