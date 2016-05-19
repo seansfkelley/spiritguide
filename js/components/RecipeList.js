@@ -1,15 +1,18 @@
 import React from 'react';
-import { View, ListView, Text, TouchableHighlight, StyleSheet } from 'react-native';
+import { View, ListView, Text, TextInput, TouchableHighlight, StyleSheet } from 'react-native';
 import PureRender from 'pure-render-decorator';
 
 import { recipe } from './propTypes';
 import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
 import {
+  copyWithPrependedSentinel,
   rowAndSectionIdentities,
   getSectionData,
   makeGetRowData,
   shallowEqualHasChanged
 } from './util/listViewDataSourceUtils';
+
+const SEARCH_BAR_SENTINEL = Symbol('SEARCH_BAR_SENTINEL');
 
 @PureRender
 export default class RecipeList extends React.Component {
@@ -46,34 +49,49 @@ export default class RecipeList extends React.Component {
   }
 
   _renderRow = (rowData, sectionId, rowId) => {
-    return (
-      <TouchableHighlight
-        style={styles.row}
-        underlayColor='#f6f6f6'
-        onPress={this.props.onPress.bind(null, +sectionId, +rowId)}
-      >
-        <Text style={styles.rowText}>{rowData.name}</Text>
-      </TouchableHighlight>
-    );
+    if (rowData === SEARCH_BAR_SENTINEL) {
+      return (
+        <TextInput/>
+      );
+    } else {
+      return (
+        <TouchableHighlight
+          style={styles.row}
+          underlayColor='#f6f6f6'
+          onPress={this.props.onPress.bind(null, +sectionId, +rowId)}
+        >
+          <Text style={styles.rowText}>{rowData.name}</Text>
+        </TouchableHighlight>
+      );
+    }
   };
 
   _renderSectionHeader = (sectionData, sectionId) => {
-    return (
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{sectionData.groupName}</Text>
-      </View>
-    );
+    if (sectionData.isSentinel) {
+      return null;
+    } else {
+      return (
+        <View style={styles.header}>
+          <Text style={styles.headerText}>{sectionData.groupName}</Text>
+        </View>
+      );
+    }
   };
 
   _recomputeDataSource(dataSource, groupedRecipes) {
-    const { sectionIds, rowIds } = rowAndSectionIdentities(groupedRecipes, 'recipes');
+    const recipesWithSearchBarSentinel = copyWithPrependedSentinel(
+      groupedRecipes,
+      'recipes',
+      SEARCH_BAR_SENTINEL
+    );
+    const { sectionIds, rowIds } = rowAndSectionIdentities(recipesWithSearchBarSentinel, 'recipes');
     return (dataSource || new ListView.DataSource({
       rowHasChanged: shallowEqualHasChanged,
       sectionHeaderHasChanged: shallowEqualHasChanged,
       getSectionData,
       getRowData: makeGetRowData('recipes')
     }))
-    .cloneWithRowsAndSections(groupedRecipes, sectionIds, rowIds);
+    .cloneWithRowsAndSections(recipesWithSearchBarSentinel, sectionIds, rowIds);
   };
 }
 

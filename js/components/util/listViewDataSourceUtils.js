@@ -1,6 +1,13 @@
 import _ from 'lodash';
 import shallowequal from 'shallowequal';
 
+export function copyWithPrependedSentinel(arrayOfObjectsOfArrays, rowsField, sentinel) {
+  return [{
+    isSentinel: true,
+    [rowsField]: [ sentinel ]
+  }].concat(arrayOfObjectsOfArrays);
+}
+
 export function rowAndSectionIdentities(arrayOfObjectsOfArrays, rowsField) {
   const sectionIds = _.range(arrayOfObjectsOfArrays.length);
   let rowIds = [];
