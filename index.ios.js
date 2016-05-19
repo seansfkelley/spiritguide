@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 
 import App from './js/components/App';
 import store, { initializeStore } from './js/store';
+import * as selectors from './js/store/selectors';
 
 initializeStore();
 
@@ -33,3 +34,8 @@ const styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent('spiritguide', () => SpiritGuideApp);
+
+this.debug = {
+  store,
+  selectors
+};
