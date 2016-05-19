@@ -9,7 +9,7 @@ export default function(recipe, searchTerm, ingredientsByTag){
   assert(recipe);
   assert(ingredientsByTag);
 
-  searchTerm = searchTerm.trim().toLowerCase();
+  searchTerm = _.deburr(searchTerm.trim().toLowerCase());
 
   if (!searchTerm) {
     return false;

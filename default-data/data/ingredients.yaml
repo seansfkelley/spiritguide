@@ -176,6 +176,11 @@
   generic    : tequila-like
   group      : tequila
   difficulty : hard
+  searchable :
+    - mescal
+    - anejo
+    - reposado
+    - blanco
 -
   display    : Milk
   group      : dairy
@@ -477,6 +482,10 @@
   generic    : tequila-like
   group      : tequila
   difficulty : easy
+  searchable :
+    - anejo
+    - reposado
+    - blanco
 -
   display    : Tea
   group      : mixer-other

@@ -33,7 +33,8 @@ export const selectFilteredGroupedIngredients = createSelector(
   (groupedIngredients, searchTerm) => {
     assert(groupedIngredients);
 
-    searchTerm = searchTerm.trim().toLowerCase();
+    searchTerm = _.deburr(searchTerm.trim().toLowerCase());
+
     if (!searchTerm) {
       return groupedIngredients;
     }

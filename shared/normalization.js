@@ -14,7 +14,7 @@ export function normalizeIngredient(i) {
 
   i.searchable.push(_.deburr(i.display).toLowerCase());
   i.searchable.push(i.tag);
-  i.searchable = _.invokeMap(i.searchable, 'toLowerCase');
+  i.searchable = _.uniq(_.invokeMap(i.searchable, 'toLowerCase'));
   // TODO: Add display for generic to here.
   // if i.generic and not _.contains i.searchable, i.generic
   //   i.searchable.push i.generic
