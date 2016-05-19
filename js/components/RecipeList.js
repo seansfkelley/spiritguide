@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, ListView, Text, TextInput, TouchableHighlight, StyleSheet } from 'react-native';
+import { View, ListView, Text, TouchableHighlight, StyleSheet } from 'react-native';
+import SearchBar from 'react-native-search-bar';
 import PureRender from 'pure-render-decorator';
 
 import { recipe } from './propTypes';
@@ -28,6 +29,14 @@ export default class RecipeList extends React.Component {
     dataSource: this._recomputeDataSource(null, this.props.groupedRecipes)
   };
 
+  componentDidMount() {
+    this._isMounted = true;
+    if (this._pendingScrollTo) {
+      this.refs.list.scrollTo({ y: this._pendingScrollTo });
+      delete this._pendingScrollTo;
+    }
+  }
+
   componentWillReceiveProps(props) {
     if (this.props.groupedRecipes !== props.groupedRecipes) {
       this.setState({
@@ -44,6 +53,7 @@ export default class RecipeList extends React.Component {
         renderRow={this._renderRow}
         renderSectionHeader={this._renderSectionHeader}
         initialListSize={15}
+        ref='list'
       />
     );
   }
@@ -51,7 +61,9 @@ export default class RecipeList extends React.Component {
   _renderRow = (rowData, sectionId, rowId) => {
     if (rowData === SEARCH_BAR_SENTINEL) {
       return (
-        <TextInput/>
+        <SearchBar
+          onLayout={this._onSearchBarLayout}
+        />
       );
     } else {
       return (
@@ -78,6 +90,15 @@ export default class RecipeList extends React.Component {
     }
   };
 
+  _onSearchBarLayout = (event) => {
+    const scrollTo = event.nativeEvent.layout.height;
+    if (this._isMounted) {
+      this.refs.list.scrollTo({ y: scrollTo, animated: false });
+    } else {
+      this._pendingScrollTo = scrollTo;
+    }
+  };
+
   _recomputeDataSource(dataSource, groupedRecipes) {
     const recipesWithSearchBarSentinel = copyWithPrependedSentinel(
       groupedRecipes,
@@ -98,6 +119,9 @@ export default class RecipeList extends React.Component {
 const styles = StyleSheet.create({
   list: {
     flex: 1
+  },
+  searchBar: {
+
   },
   row: {
     backgroundColor: '#fff',
