@@ -162,7 +162,6 @@ describe('ingredientSplitsByRecipeId', () => {
   });
 
   it('should return a match for a recipe that matches exactly', () => {
-    console.log(IndexableIngredient);
     ingredientSplitsByRecipeId(
       [ recipe(1, IndexableIngredient.A_ROOT) ],
       ingredientsByTag,

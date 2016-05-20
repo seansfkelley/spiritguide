@@ -240,7 +240,7 @@ describe('_selectCreateRecipeListFilterer', () => {
   const RECIPES = [ RECIPE_A, RECIPE_B ];
 
   it('should return the list as-is when set to filter \'all\'', () => {
-    RECIPES.filter(selector('all', {}, [])).should.deep.equal(RECIPES);
+    RECIPES.filter(selector('all', [], {})).should.deep.equal(RECIPES);
   });
 
   it('should filter out recipes if its splits include any missing ingredients when filtering on \'mixable\'', () => {
@@ -252,7 +252,7 @@ describe('_selectCreateRecipeListFilterer', () => {
       }
     };
 
-    [ RECIPE_A ].filter(selector('mixable', splits, [])).should.deep.equal([]);
+    [ RECIPE_A ].filter(selector('mixable', [], splits)).should.deep.equal([]);
   });
 
   it('should not filter recipes out if its splits contain substitutes but no missing ingredients when filtering on \'mixable\'', () => {
@@ -264,18 +264,18 @@ describe('_selectCreateRecipeListFilterer', () => {
       }
     };
 
-    [ RECIPE_A ].filter(selector('mixable', splits, [])).should.deep.equal([ RECIPE_A ]);
+    [ RECIPE_A ].filter(selector('mixable', [], splits)).should.deep.equal([ RECIPE_A ]);
   });
 
   it('should return an empty list when filtering on \'favorites\' with no favorites', () => {
-    RECIPES.filter(selector('favorites', {}, [])).should.deep.equal([]);
+    RECIPES.filter(selector('favorites', [], {})).should.deep.equal([]);
   });
 
   it('should return any recipes that match on the recipeId field when filtering on \'favorites\'', () => {
-    RECIPES.filter(selector('favorites', {}, [ 'b' ])).should.deep.equal([ RECIPE_B ]);
+    RECIPES.filter(selector('favorites', [ 'b' ], {})).should.deep.equal([ RECIPE_B ]);
   });
 
   it('should return any recipes with isCustom set when filtering on \'custom\'', () => {
-    RECIPES.filter(selector('custom')).should.deep.equal([ RECIPE_A ]);
+    RECIPES.filter(selector('custom', [], {})).should.deep.equal([ RECIPE_A ]);
   });
 });
