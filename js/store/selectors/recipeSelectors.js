@@ -7,13 +7,31 @@ import {
   selectBaseLiquorFilter,
   selectRecipeSearchTerm,
   selectIngredientsByTag,
-  selectRecipesById
+  selectRecipesById,
+  selectSelectedRecipeList,
+  selectFavoritedRecipeIds,
+  selectSelectedIngredientTags
 } from './basicSelectors';
+import ingredientSplitsByRecipeId from './ingredientSplitsByRecipeId';
 
 // hee hee
 const _nofilter = () => true;
 
 const WHITESPACE_REGEX = /\s+/g;
+
+export const selectAlphabeticalRecipes = createSelector(
+  selectRecipesById,
+  (recipesById) => _.chain(recipesById).values().sortBy('sortName').value()
+);
+
+export const _selectIngredientSplitsByRecipeId = createSelector(
+  selectAlphabeticalRecipes,
+  selectIngredientsByTag,
+  selectSelectedIngredientTags,
+  (alphabeticalRecipes, ingredientsByTag, selectedIngredientTags) => {
+    return ingredientSplitsByRecipeId(alphabeticalRecipes, ingredientsByTag, _.keys(selectedIngredientTags));
+  }
+);
 
 // Exported for testing.
 export const _selectCreateBaseLiquorFilterer = createSelector(
@@ -62,15 +80,36 @@ export const _selectCreateRecipeSearchTermFilterer = createSelector(
   }
 );
 
-export const selectAlphabeticalRecipes = createSelector(
-  selectRecipesById,
-  (recipesById) => _.chain(recipesById).values().sortBy('sortName').value()
+// Exported for testing.
+// TODO: Is there a different way to organize this such that we don't incur the cost of computing the
+// ingredient splits if we're not actually going to use it?
+export const _selectCreateRecipeListFilterer = createSelector(
+  selectSelectedRecipeList,
+  selectFavoritedRecipeIds,
+  _selectIngredientSplitsByRecipeId,
+  (selectedRecipeList, favoritedRecipeIds, ingredientSplitsByRecipeId) => {
+    switch (selectedRecipeList) {
+      // TODO: Use a real enumeration.
+      case 'all':
+        return _nofilter;
+
+      case 'mixable':
+        return (recipe) => ingredientSplitsByRecipeId[recipe.recipeId].missing.length === 0;
+
+      case 'favorites':
+        return (recipe) => favoritedRecipeIds.indexOf(recipe.recipeId) !== -1;
+
+      case 'custom':
+        return (recipe) => !!recipe.isCustom;
+    }
+  }
 );
 
 export const selectFilteredAlphabeticalRecipes = createSelector(
   selectAlphabeticalRecipes,
   _selectCreateBaseLiquorFilterer,
   _selectCreateRecipeSearchTermFilterer,
+  _selectCreateRecipeListFilterer,
   (alphabeticalRecipes, ...filterers) => {
     let recipes = alphabeticalRecipes;
     filterers.forEach(fn => { recipes = recipes.filter(fn) });
@@ -103,6 +142,7 @@ export const selectFilteredGroupedAlphabeticalRecipes = createSelector(
   selectGroupedAlphabeticalRecipes,
   _selectCreateBaseLiquorFilterer,
   _selectCreateRecipeSearchTermFilterer,
+  _selectCreateRecipeListFilterer,
   (groupedAlphabeticalRecipes, ...filterers) => {
     return groupedAlphabeticalRecipes
     .map(group => {

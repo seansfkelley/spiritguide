@@ -3,7 +3,8 @@ import update from 'immutability-helper';
 import ActionType from '../ActionType';
 
 const EMPTY_STORE = {
-  recipesById: {}
+  recipesById: {},
+  favoritedRecipeIds: []
 };
 
 export default function reduceRecipes(state = EMPTY_STORE, action) {
@@ -20,12 +21,20 @@ export default function reduceRecipes(state = EMPTY_STORE, action) {
       });
     }
 
-    case ActionType.DELETE_RECIPE: {
-      const recipeId = action.payload;
+    case ActionType.DELETE_RECIPE:
       return update(state, {
-        recipesById: { $omit: recipeId }
+        recipesById: { $omit: action.payload }
       });
-    }
+
+    case ActionType.FAVORITE_RECIPE:
+      return update(state, {
+        favoritedRecipeIds: { $push: action.payload }
+      });
+
+    case ActionType.UNFAVORITE_RECIPE:
+      return update(state, {
+        favoritedRecipeIds: { $without: action.payload }
+      });
 
     default:
       return state;

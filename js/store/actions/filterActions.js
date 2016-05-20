@@ -27,3 +27,10 @@ export function setBaseLiquorFilter(payload) {
     payload
   };
 }
+
+export function setSelectedRecipeList(payload) {
+  return {
+    type: ActionType.SET_SELECTED_RECIPE_LIST,
+    payload
+  };
+}
