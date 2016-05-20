@@ -25,8 +25,13 @@ import {
   selectFilteredGroupedIngredients,
   selectRecipeSearchTerm
 } from '../store/selectors';
+import {
+  ANY_BASE_LIQUOR,
+  BASE_LIQUORS,
+  RECIPE_LIST_TYPES,
+  RECIPE_LIST_NAMES
+} from '../definitions';
 import * as filterActions from '../store/actions/filterActions';
-import { ANY_BASE_LIQUOR, BASE_LIQUORS } from '../definitions';
 import { recipe, ingredient } from './propTypes';
 import SwipeSelector from './SwipeSelector';
 import RecipeList from './RecipeList';
@@ -41,6 +46,11 @@ const RouteType = enumeration(
 const BASE_LIQUOR_OPTIONS = [ ANY_BASE_LIQUOR ].concat(BASE_LIQUORS).map(l => ({
   label: l.toUpperCase(),
   value: l
+}));
+
+const RECIPE_LIST_OPTIONS = RECIPE_LIST_TYPES.map(t => ({
+  label: RECIPE_LIST_NAMES[t],
+  value: t
 }));
 
 @PureRender
@@ -118,11 +128,19 @@ class App extends React.Component {
               <View style={styles.statusBarSpacer}/>
               <StatusBar hidden={false} barStyle={IOS_STATUS_BAR_STYLE}/>
               <SwipeSelector
-                style={styles.baseSelector}
+                style={styles.headerSelector}
+                options={RECIPE_LIST_OPTIONS}
+                optionWidth={200}
+                optionStyle={styles.headerSelectorOption}
+                selectedOptionStyle={styles.selectedHeaderSelectorOption}
+                onOptionSelect={this.props.filterActions.setSelectedRecipeList}
+              />
+              <SwipeSelector
+                style={styles.headerSelector}
                 options={BASE_LIQUOR_OPTIONS}
                 optionWidth={125}
-                optionStyle={styles.baseSelectorOption}
-                selectedOptionStyle={styles.selectedBaseSelectorOption}
+                optionStyle={styles.headerSelectorOption}
+                selectedOptionStyle={styles.selectedHeaderSelectorOption}
                 onOptionSelect={this._onBaseLiquorChange}
               />
               <RecipeList
@@ -200,17 +218,17 @@ const styles = StyleSheet.create({
     paddingTop: IOS_STATUS_BAR_HEIGHT,
     backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
   },
-  baseSelector: {
+  headerSelector: {
     backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
   },
-  baseSelectorOption: {
+  headerSelectorOption: {
     backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR,
     color: '#ddd',
     fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY,
     fontSize: 16,
     fontWeight: '600'
   },
-  selectedBaseSelectorOption: {
+  selectedHeaderSelectorOption: {
     color: '#eee',
     fontWeight: '700'
   }
