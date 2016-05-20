@@ -14,6 +14,7 @@ import {
 } from './util/listViewDataSourceUtils';
 
 const SEARCH_BAR_SENTINEL = Symbol('SEARCH_BAR_SENTINEL');
+const NO_RESULTS_SENTINEL = Symbol('NO_RESULTS_SENTINEL');
 
 @PureRender
 export default class RecipeList extends React.Component {
@@ -67,6 +68,15 @@ export default class RecipeList extends React.Component {
           placeholder='Name or ingredient...'
         />
       );
+    } else if (rowData === NO_RESULTS_SENTINEL) {
+      return (
+        <View style={styles.noResultsWrapper}>
+          <Text style={styles.noResultsText}>
+            {'Nothing to see here!\n' +
+            'Try broadening your filtering options.'}
+          </Text>
+        </View>
+      );
     } else {
       return (
         <TouchableHighlight
@@ -100,19 +110,29 @@ export default class RecipeList extends React.Component {
   };
 
   _recomputeDataSource(dataSource, groupedRecipes) {
-    const recipesWithSearchBarSentinel = copyWithPrependedSentinel(
-      groupedRecipes,
+    let recipesWithSentinels = groupedRecipes;
+    if (groupedRecipes.length === 0) {
+      recipesWithSentinels = copyWithPrependedSentinel(
+        recipesWithSentinels,
+        'recipes',
+        NO_RESULTS_SENTINEL
+      );
+    }
+
+    recipesWithSentinels = copyWithPrependedSentinel(
+      recipesWithSentinels,
       'recipes',
       SEARCH_BAR_SENTINEL
     );
-    const { sectionIds, rowIds } = rowAndSectionIdentities(recipesWithSearchBarSentinel, 'recipes');
+
+    const { sectionIds, rowIds } = rowAndSectionIdentities(recipesWithSentinels, 'recipes');
     return (dataSource || new ListView.DataSource({
       rowHasChanged: shallowEqualHasChanged,
       sectionHeaderHasChanged: shallowEqualHasChanged,
       getSectionData,
       getRowData: makeGetRowData('recipes')
     }))
-    .cloneWithRowsAndSections(recipesWithSearchBarSentinel, sectionIds, rowIds);
+    .cloneWithRowsAndSections(recipesWithSentinels, sectionIds, rowIds);
   };
 
   scrollToTop(showSearchBar) {
@@ -129,6 +149,16 @@ const styles = StyleSheet.create({
   },
   searchBar: {
 
+  },
+  noResultsWrapper: {
+    alignItems: 'center'
+  },
+  noResultsText: {
+    paddingTop: 30,
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY,
+    textAlign: 'center',
+    fontSize: 16,
+    lineHeight: 20
   },
   row: {
     backgroundColor: '#fff',
