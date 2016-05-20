@@ -2,6 +2,76 @@ import {
   _selectCreateBaseLiquorFilterer,
   _selectCreateRecipeSearchTermFilterer
 } from '../js/store/selectors/recipeSelectors';
+import { ANY_BASE_LIQUOR } from '../js/definitions';
+
+describe('_selectCreateBaseLiquorFilterer', () => {
+  const selector = _selectCreateBaseLiquorFilterer.resultFunc;
+
+  const RECIPE_A = { base : [ 'a' ] };
+  const RECIPE_B = { base : [ 'b' ] };
+  const RECIPE_A_B = { base : [ 'a', 'b' ] };
+
+  const RECIPE_A_STRING = { base : 'a' };
+  const RECIPE_B_STRING = { base : 'b' };
+
+  const RECIPE_NULL = {};
+  const RECIPE_OBJECT = { base : {} };
+
+  it('should return the list as-is if the filter is ANY_BASE_LIQUOR', () => {
+    [
+      RECIPE_A,
+      RECIPE_B
+    ].filter(selector(ANY_BASE_LIQUOR)).should.deep.equal([
+      RECIPE_A,
+      RECIPE_B
+    ]);
+  });
+
+  it('should filter recipes properly when their "base" property is a string', () => {
+    [
+      RECIPE_A_STRING,
+      RECIPE_B_STRING
+    ].filter(selector('a')).should.deep.equal([
+      RECIPE_A_STRING
+    ]);
+  });
+
+  it('should filter recipes properly when their "base" property is an array of strings', () => {
+    [
+      RECIPE_A,
+      RECIPE_B
+    ].filter(selector('a')).should.deep.equal([
+      RECIPE_A
+    ]);
+  });
+
+  it('should filter out recipes with no "base" property', () => {
+    [
+      RECIPE_A,
+      RECIPE_NULL
+    ].filter(selector('a')).should.deep.equal([
+      RECIPE_A
+    ]);
+  });
+
+  it('should filter out recipes with a non-string, non-array "base" property', () => {
+    [
+      RECIPE_A,
+      RECIPE_OBJECT
+    ].filter(selector('a')).should.deep.equal([
+      RECIPE_A
+    ]);
+  });
+
+  it('should retain recipes if any "base" matches when it\'s an array of strings', () => {
+    [
+      RECIPE_A,
+      RECIPE_A_B
+    ].filter(selector('b')).should.deep.equal([
+      RECIPE_A_B
+    ]);
+  });
+});
 
 describe('_selectCreateRecipeSearchTermFilterer', () => {
   const selector = _selectCreateRecipeSearchTermFilterer.resultFunc;
