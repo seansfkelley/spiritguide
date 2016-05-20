@@ -1,8 +1,6 @@
 import _ from 'lodash';
 
 import ingredientSplitsByRecipeId, {
-  _includeAllGenerics,
-  _toMostGenericTags,
   _computeSubstitutionMap,
   _generateSearchResult
 } from '../js/store/selectors/ingredientSplitsByRecipeId';
@@ -32,119 +30,6 @@ const IndexableIngredient = {
 const ResultIngredient = _.mapValues(IndexableIngredient, i => _.omit(i, 'generic'));
 
 describe('ingredientSplitsByRecipeId', () => {
-  describe('#_includeAllGenerics', () => {
-    const ingredientsByTag = makeIngredientsByTag([
-      IndexableIngredient.A_ROOT,
-      IndexableIngredient.A_CHILD_1,
-      IndexableIngredient.A_CHILD_1_1,
-      IndexableIngredient.A_CHILD_2
-    ]);
-
-    it('should return an input ingredient with no generic', () => {
-      _includeAllGenerics(
-        [ IndexableIngredient.A_ROOT ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT
-      ]);
-    });
-
-    it('should return an ingredient and its single generic', () => {
-      _includeAllGenerics(
-        [ IndexableIngredient.A_CHILD_1 ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT,
-        IndexableIngredient.A_CHILD_1
-      ]);
-    });
-
-    it('should return an ingredient and its multiple generics', () => {
-      _includeAllGenerics(
-        [ IndexableIngredient.A_CHILD_1_1 ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT,
-        IndexableIngredient.A_CHILD_1,
-        IndexableIngredient.A_CHILD_1_1
-      ]);
-    });
-
-    it('should not return any duplicates if multiple ingredients are the same', () => {
-      _includeAllGenerics(
-        [ IndexableIngredient.A_ROOT, IndexableIngredient.A_ROOT ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT
-      ]);
-    });
-
-    it('should not return any duplicates if multiple ingredients have the same generic', () => {
-      _includeAllGenerics(
-        [ IndexableIngredient.A_CHILD_1, IndexableIngredient.A_CHILD_2 ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT,
-        IndexableIngredient.A_CHILD_1,
-        IndexableIngredient.A_CHILD_2
-      ]);
-    });
-  });
-
-  describe('#_toMostGenericTags', () => {
-    const ingredientsByTag = makeIngredientsByTag([
-      IndexableIngredient.A_ROOT,
-      IndexableIngredient.A_CHILD_1,
-      IndexableIngredient.A_CHILD_1_1,
-      IndexableIngredient.A_CHILD_2
-    ]);
-
-    it('should return the tag of an ingredient with no generic', () => {
-      _toMostGenericTags(
-        [ IndexableIngredient.A_ROOT ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT.tag
-      ]);
-    });
-
-    it('should return the tag of a generic of an ingredient', () => {
-      _toMostGenericTags(
-        [ IndexableIngredient.A_CHILD_1 ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT.tag
-      ]);
-    });
-
-    it('should return the tag of the most generic ancestor of an ingredient', () => {
-      _toMostGenericTags(
-        [ IndexableIngredient.A_CHILD_1_1 ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT.tag
-      ]);
-    });
-
-    it('should not return any duplicates if multiple ingredients are the same', () => {
-      _toMostGenericTags(
-        [ IndexableIngredient.A_ROOT, IndexableIngredient.A_ROOT ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT.tag
-      ]);
-    });
-
-    it('should not return any duplicates if multiple ingredients have the same generic', () => {
-      _toMostGenericTags(
-        [ IndexableIngredient.A_CHILD_1, IndexableIngredient.A_CHILD_2 ],
-        ingredientsByTag
-      ).should.have.members([
-        IndexableIngredient.A_ROOT.tag
-      ]);
-    });
-  });
-
   describe('#_computeSubstitutionMap', () => {
     const ingredientsByTag = makeIngredientsByTag([
       IndexableIngredient.A_ROOT,
@@ -315,7 +200,7 @@ describe('ingredientSplitsByRecipeId', () => {
   it('should silently ignore input ingredients with no tags', () => {
     ingredientSplitsByRecipeId(
       [ recipe(1, IndexableIngredient.A_ROOT, IndexableIngredient.NULL) ],
-      ingredientsByTag
+      ingredientsByTag,
       [ IndexableIngredient.A_ROOT.tag ]
     ).should.have.all.keys([ '1' ]);
   });
@@ -354,7 +239,7 @@ describe('ingredientSplitsByRecipeId', () => {
   it('should return a substitutable match for a recipe if it calls for a child (more specific) ingredient', () => {
     ingredientSplitsByRecipeId(
       [ recipe(1, IndexableIngredient.A_CHILD_1) ],
-      ingredientsByTag
+      ingredientsByTag,
       [ IndexableIngredient.A_ROOT.tag ]
     ).should.deep.equal({
       '1': {
