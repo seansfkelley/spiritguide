@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { createSelector } from 'reselect';
 
 import { ANY_BASE_LIQUOR } from '../../definitions';
-import recipeMatchesSearchTerm from './recipeMatchesSearchTerm';
 import {
   selectBaseLiquorFilter,
   selectRecipeSearchTerm,
@@ -13,7 +12,10 @@ import {
 // hee hee
 const _nofilter = () => true;
 
-const selectCreateBaseLiquorFilterer = createSelector(
+const WHITESPACE_REGEX = /\s+/g;
+
+// Exported for testing.
+export const _selectCreateBaseLiquorFilterer = createSelector(
   selectBaseLiquorFilter,
   (baseLiquor) => {
     if (baseLiquor === ANY_BASE_LIQUOR) {
@@ -33,14 +35,25 @@ const selectCreateBaseLiquorFilterer = createSelector(
   }
 );
 
-const selectCreateRecipeSearchTermFilterer = createSelector(
+// Exported for testing.
+export const _selectCreateRecipeSearchTermFilterer = createSelector(
   selectRecipeSearchTerm,
   selectIngredientsByTag,
   (searchTerm, ingredientsByTag) => {
-    searchTerm = searchTerm.trim();
+    searchTerm = _.deburr(searchTerm).trim().toLowerCase();
     if (searchTerm) {
+      const terms = _.compact(searchTerm.split(WHITESPACE_REGEX));
+
       return (recipe) => {
-        return recipeMatchesSearchTerm(recipe, searchTerm, ingredientsByTag);
+        const searchable = _.chain(recipe.ingredients)
+          .map('tag')
+          .map((t) => ingredientsByTag[t] ? ingredientsByTag[t].searchable : null)
+          .compact()
+          .flatten()
+          .concat(recipe.canonicalName.split(WHITESPACE_REGEX))
+          .value()
+
+      return _.every(terms, (t) => _.some(searchable, (s) => s.indexOf(t) !== -1));
       };
     } else {
       return _nofilter;
@@ -55,8 +68,8 @@ export const selectAlphabeticalRecipes = createSelector(
 
 export const selectFilteredAlphabeticalRecipes = createSelector(
   selectAlphabeticalRecipes,
-  selectCreateBaseLiquorFilterer,
-  selectCreateRecipeSearchTermFilterer,
+  _selectCreateBaseLiquorFilterer,
+  _selectCreateRecipeSearchTermFilterer,
   (alphabeticalRecipes, ...filterers) => {
     let recipes = alphabeticalRecipes;
     filterers.forEach(fn => { recipes = recipes.filter(fn) });
@@ -86,8 +99,8 @@ export const selectGroupedAlphabeticalRecipes = createSelector(
 
 export const selectFilteredGroupedAlphabeticalRecipes = createSelector(
   selectGroupedAlphabeticalRecipes,
-  selectCreateBaseLiquorFilterer,
-  selectCreateRecipeSearchTermFilterer,
+  _selectCreateBaseLiquorFilterer,
+  _selectCreateRecipeSearchTermFilterer,
   (groupedAlphabeticalRecipes, ...filterers) => {
     return groupedAlphabeticalRecipes
     .map(group => {
