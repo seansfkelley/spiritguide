@@ -73,7 +73,7 @@ export default function(recipes, ingredientsByTag, ingredientTags) {
   const exactlyAvailableIngredientsRaw = ingredientTags.map((tag) => ingredientsByTag[tag]);
   const exactlyAvailableIngredients = _.compact(exactlyAvailableIngredientsRaw);
   if (exactlyAvailableIngredientsRaw.length !== exactlyAvailableIngredients.length) {
-    extraneous = _.chain(exactlyAvailableIngredientsRaw)
+    const extraneous = _.chain(exactlyAvailableIngredientsRaw)
       .map((value, i) => value || ingredientTags[i])
       .compact()
       .value()
@@ -84,11 +84,8 @@ export default function(recipes, ingredientsByTag, ingredientTags) {
   const allAvailableTagsWithGenerics = _.keys(substitutionMap);
 
   return _.chain(recipes)
-    .map((r) => _generateSearchResult(r, substitutionMap, ingredientsByTag))
-    .compact()
-    .reduce((obj, result) => {
-      obj[result.recipeId] = _.omit(result, 'recipeId');
-      return obj;
-    }, {})
+    .map(r => _generateSearchResult(r, substitutionMap, ingredientsByTag))
+    .keyBy('recipeId')
+    .mapValues(r => _.omit(r, 'recipeId'))
     .value();
 }
