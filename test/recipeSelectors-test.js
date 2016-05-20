@@ -1,8 +1,76 @@
+import _ from 'lodash';
+
 import {
+  selectAlphabeticalRecipes,
+  selectGroupedAlphabeticalRecipes,
   _selectCreateBaseLiquorFilterer,
   _selectCreateRecipeSearchTermFilterer
 } from '../js/store/selectors/recipeSelectors';
 import { ANY_BASE_LIQUOR } from '../js/definitions';
+
+describe('selectAlphabeticalRecipes', () => {
+  const selector = selectAlphabeticalRecipes.resultFunc;
+
+  const RECIPES_BY_ID = {
+    'id1': { sortName : 'a2' },
+    'id2': { sortName : '10' },
+    'id3': { sortName : '1' },
+    'id4': { sortName : 'b' },
+    'id5': { sortName : '2' },
+    'id6': { sortName : 'a1' }
+  };
+
+  it('should sort alphabetically by \'sortName\', ignoring numerical ordering', () => {
+    _.map(selector(RECIPES_BY_ID), 'sortName').should.deep.equal([
+      '1',
+      '10',
+      '2',
+      'a1',
+      'a2',
+      'b'
+    ]);
+  });
+});
+
+describe('selectGroupedAlphabeticalRecipes', () => {
+  const selector = selectGroupedAlphabeticalRecipes.resultFunc;
+
+  const RECIPE_A = { sortName : 'a1' };
+  const RECIPE_A_2 = { sortName : 'a2' };
+  const RECIPE_B = { sortName : 'b' };
+  const RECIPE_1 = { sortName : '1' };
+  const RECIPE_10 = { sortName : '10' };
+  const RECIPE_2 = { sortName : '2' };
+
+  it('should group recipes based on the first character of their "sortName" property', () => {
+    selector([
+      RECIPE_A,
+      RECIPE_A_2,
+      RECIPE_B,
+    ]).should.deep.equal([ {
+      groupName: 'A',
+      recipes : [ RECIPE_A, RECIPE_A_2 ]
+    }, {
+      groupName: 'B',
+      recipes: [ RECIPE_B ]
+    }]);
+  });
+
+  it('should group numerically-named recipes together', () => {
+    selector([
+      RECIPE_1,
+      RECIPE_10,
+      RECIPE_2,
+      RECIPE_A
+    ]).should.deep.equal([{
+      groupName: '#',
+      recipes: [ RECIPE_1, RECIPE_10, RECIPE_2 ]
+    }, {
+      groupName: 'A',
+      recipes: [ RECIPE_A ]
+    }]);
+  });
+});
 
 describe('_selectCreateBaseLiquorFilterer', () => {
   const selector = _selectCreateBaseLiquorFilterer.resultFunc;

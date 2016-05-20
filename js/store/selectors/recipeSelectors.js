@@ -83,7 +83,8 @@ export const selectGroupedAlphabeticalRecipes = createSelector(
   (alphabeticalRecipes) => {
     let groups = [];
     alphabeticalRecipes.forEach((recipe, i) => {
-      const maybeNewGroupName = recipe.sortName[0].toUpperCase();
+      const sortCharacter = recipe.sortName[0].toUpperCase();
+      const maybeNewGroupName = /\d/.test(sortCharacter) ? '#' : sortCharacter;
       const newGroup = i === 0 || maybeNewGroupName !== groups[groups.length - 1].groupName;
       if (newGroup) {
         groups.push({
