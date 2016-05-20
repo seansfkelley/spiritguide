@@ -2,7 +2,10 @@
 
 ## Setup
 
-First, `npm install`.
+```
+npm install
+./hooks/install.sh
+```
 
 ### Recipe Database
 
