@@ -105,7 +105,7 @@ export default class SwipeSelector extends React.Component {
 
   _scrollToIndex = (index, animated) => {
     this.refs.list.scrollTo({
-      x: this._computeHorizontalPadding() + (index - 1) * this.props.optionWidth,
+      x: index * this.props.optionWidth,
       animated
     });
   };
