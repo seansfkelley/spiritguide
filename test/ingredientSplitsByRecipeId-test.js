@@ -144,14 +144,6 @@ describe('ingredientSplitsByRecipeId', () => {
     ).should.not.be.empty;
   });
 
-  it('should accept ingredientTags as a map from strings to anything (i.e. a set)', () => {
-    ingredientSplitsByRecipeId(
-      [ recipe(null, IndexableIngredient.A_ROOT) ],
-      ingredientsByTag,
-      { [IndexableIngredient.A_ROOT.tag]: true }
-    ).should.not.be.empty;
-  });
-
   // This is an upgrade consideration, if someone has a tag in localStorage but it's removed in later versions.
   it('should should not throw an exception when given ingredients it doesn\'t understand', () => {
     ingredientSplitsByRecipeId(
@@ -170,6 +162,7 @@ describe('ingredientSplitsByRecipeId', () => {
   });
 
   it('should return a match for a recipe that matches exactly', () => {
+    console.log(IndexableIngredient);
     ingredientSplitsByRecipeId(
       [ recipe(1, IndexableIngredient.A_ROOT) ],
       ingredientsByTag,

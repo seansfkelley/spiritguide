@@ -66,11 +66,9 @@ export default function(recipes, ingredientsByTag, ingredientTags) {
   assert(recipes);
   assert(ingredientsByTag);
   assert(ingredientTags);
+  assert(_.isArray(ingredientTags));
 
-  // Fucking hell I just want Set objects.
-  ingredientTags = _.keys(ingredientTags);
-
-  const exactlyAvailableIngredientsRaw = ingredientTags.map((tag) => ingredientsByTag[tag]);
+  const exactlyAvailableIngredientsRaw = ingredientTags.map(tag => ingredientsByTag[tag]);
   const exactlyAvailableIngredients = _.compact(exactlyAvailableIngredientsRaw);
   if (exactlyAvailableIngredientsRaw.length !== exactlyAvailableIngredients.length) {
     const extraneous = _.chain(exactlyAvailableIngredientsRaw)
@@ -81,7 +79,6 @@ export default function(recipes, ingredientsByTag, ingredientTags) {
   }
 
   const substitutionMap = _computeSubstitutionMap(exactlyAvailableIngredients, ingredientsByTag);
-  const allAvailableTagsWithGenerics = _.keys(substitutionMap);
 
   return _.chain(recipes)
     .map(r => _generateSearchResult(r, substitutionMap, ingredientsByTag))
