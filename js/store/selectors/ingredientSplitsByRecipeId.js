@@ -3,27 +3,6 @@ import log from 'loglevel';
 
 import assert from  '../../../shared/tinyassert';
 
-export function _includeAllGenerics(ingredients, ingredientsByTag) {
-  const withGenerics = [];
-
-  ingredients.forEach(current => {
-    withGenerics.push(current);
-    while (current = ingredientsByTag[current.generic]) {
-      withGenerics.push(current);
-    };
-  });
-
-  return _.uniq(withGenerics);
-}
-
-export function _toMostGenericTags(ingredients, ingredientsByTag) {
-  return _.chain(_includeAllGenerics(ingredients, ingredientsByTag))
-    .reject('generic')
-    .map('tag')
-    .uniq()
-    .value();
-};
-
 export function _computeSubstitutionMap(ingredients, ingredientsByTag) {
   const ingredientsByTagWithGenerics = {};
 
@@ -71,7 +50,7 @@ function _generateSearchResult(recipe, substitutionMap, ingredientsByTag) {
         if (!currentIngredient) {
           log.warn(`recipe '${recipe.name}' calls for or has a generic that calls for unknown tag '${currentTag}'`);
         };
-        const currentTag = _.get(ingredientsByTag, [ _.get(currentIngredient, 'generic'), 'tag' ]);
+        currentTag = _.get(ingredientsByTag, [ _.get(currentIngredient, 'generic'), 'tag' ]);
       }
 
       if (!currentTag) {
@@ -105,20 +84,7 @@ export default function(recipes, ingredientsByTag, ingredientTags) {
   const allAvailableTagsWithGenerics = _.keys(substitutionMap);
 
   return _.chain(recipes)
-    .map((r) => {
-      const indexableIngredients = _.chain(r.ingredients)
-        .filter('tag')
-        .map(i => ingredientsByTag[i.tag])
-        .value();
-      const unknownIngredientAdjustment = indexableIngredients.length - _.compact(indexableIngredients).length;
-      const mostGenericRecipeTags = _toMostGenericTags(_.compact(indexableIngredients), ingredientsByTag);
-      const missingCount = _.difference(
-        mostGenericRecipeTags,
-        allAvailableTagsWithGenerics
-      ).length + unknownIngredientAdjustment;
-
-      return _generateSearchResult(r, substitutionMap, ingredientsByTag);
-    })
+    .map((r) => _generateSearchResult(r, substitutionMap, ingredientsByTag))
     .compact()
     .reduce((obj, result) => {
       obj[result.recipeId] = _.omit(result, 'recipeId');
