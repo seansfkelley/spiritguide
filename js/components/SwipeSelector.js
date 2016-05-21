@@ -36,16 +36,9 @@ export default class SwipeSelector extends React.Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    let targetIndex = this.state.currentIndex;
-    if (nextProps.initialIndex !== this.props.initialIndex) {
-      targetIndex = nextProps.initialIndex;
-      this._scrollToIndex(targetIndex, false);
-      this.setState({ currentIndex: targetIndex });
-    }
-
     if (this.props.options !== nextProps.options) {
       this.setState({
-        dataSource: this._recomputeDataSource(this.state.dataSource, nextProps.options, targetIndex)
+        dataSource: this._recomputeDataSource(this.state.dataSource, nextProps.options, this.state.currentIndex)
       });
     }
   }

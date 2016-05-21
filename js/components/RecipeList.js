@@ -24,6 +24,7 @@ export default class RecipeList extends React.Component {
       recipes: React.PropTypes.arrayOf(recipe).isRequired
     })).isRequired,
     onPress: React.PropTypes.func.isRequired,
+    searchTerm: React.PropTypes.string.isRequired,
     onSearchTermChange: React.PropTypes.func.isRequired
   };
 
@@ -34,7 +35,7 @@ export default class RecipeList extends React.Component {
   componentDidMount() {
     this._isMounted = true;
     if (this._searchBarHeight) {
-      this.scrollToTop(false);
+      this.scrollToTop(!!this.props.searchTerm);
     }
   }
 
@@ -63,6 +64,7 @@ export default class RecipeList extends React.Component {
     if (rowData === SEARCH_BAR_SENTINEL) {
       return (
         <SearchBar
+          text={this.props.searchTerm}
           onLayout={this._onSearchBarLayout}
           onChangeText={this.props.onSearchTermChange}
           placeholder='Name or ingredient...'
@@ -105,7 +107,7 @@ export default class RecipeList extends React.Component {
   _onSearchBarLayout = (event) => {
     this._searchBarHeight = event.nativeEvent.layout.height;
     if (this._isMounted) {
-      this.scrollToTop(false);
+      this.scrollToTop(!!this.props.searchTerm);
     }
   };
 
