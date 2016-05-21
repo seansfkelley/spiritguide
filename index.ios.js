@@ -6,7 +6,7 @@ import log from 'loglevel';
 log.setLevel('debug');
 
 import React from 'react';
-import { AppRegistry, StyleSheet, View } from 'react-native';
+import { AppRegistry, StyleSheet, View, AsyncStorage } from 'react-native';
 import { Provider } from 'react-redux';
 
 import App from './js/components/App';
@@ -37,5 +37,6 @@ AppRegistry.registerComponent('spiritguide', () => SpiritGuideApp);
 
 this.debug = {
   store,
-  selectors
+  selectors,
+  AsyncStorage
 };

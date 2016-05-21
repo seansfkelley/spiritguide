@@ -20,10 +20,12 @@ import {
   IOS_STATUS_BAR_STYLE
 } from './constants';
 import {
+  selectBaseLiquorFilter,
   selectFilteredAlphabeticalRecipes,
   selectFilteredGroupedAlphabeticalRecipes,
   selectFilteredGroupedIngredients,
-  selectRecipeSearchTerm
+  selectRecipeSearchTerm,
+  selectSelectedRecipeList
 } from '../store/selectors';
 import {
   ANY_BASE_LIQUOR,
@@ -68,7 +70,9 @@ class App extends React.Component {
     })).isRequired,
     selectedIngredientTags: React.PropTypes.objectOf(React.PropTypes.bool).isRequired,
     filterActions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
-    recipeSearchTerm: React.PropTypes.string.isRequired
+    recipeSearchTerm: React.PropTypes.string.isRequired,
+    baseLiquorFilter: React.PropTypes.string.isRequired,
+    selectedRecipeList: React.PropTypes.string.isRequired
   };
 
   render() {
@@ -130,6 +134,7 @@ class App extends React.Component {
               <SwipeSelector
                 style={styles.headerSelector}
                 options={RECIPE_LIST_OPTIONS}
+                initialIndex={_.findIndex(RECIPE_LIST_OPTIONS, { value: this.props.selectedRecipeList })}
                 optionWidth={200}
                 optionStyle={styles.headerSelectorOption}
                 selectedOptionStyle={styles.selectedHeaderSelectorOption}
@@ -138,6 +143,7 @@ class App extends React.Component {
               <SwipeSelector
                 style={styles.headerSelector}
                 options={BASE_LIQUOR_OPTIONS}
+                initialIndex={_.findIndex(BASE_LIQUOR_OPTIONS, { value: this.props.baseLiquorFilter })}
                 optionWidth={125}
                 optionStyle={styles.headerSelectorOption}
                 selectedOptionStyle={styles.selectedHeaderSelectorOption}
@@ -146,6 +152,7 @@ class App extends React.Component {
               <RecipeList
                 groupedRecipes={this.props.filteredGroupedAlphabeticalRecipes}
                 onPress={this._onRecipePress.bind(this, navigator)}
+                searchTerm={this.props.recipeSearchTerm}
                 onSearchTermChange={this.props.filterActions.setRecipeSearchTerm}
                 ref={(c) => this._recipeList = c}
               />
@@ -241,7 +248,9 @@ function mapStateToProps(state) {
     filteredGroupedAlphabeticalRecipes: selectFilteredGroupedAlphabeticalRecipes(state),
     filteredGroupedIngredients: selectFilteredGroupedIngredients(state),
     selectedIngredientTags: state.filters.selectedIngredientTags,
-    recipeSearchTerm: selectRecipeSearchTerm(state)
+    recipeSearchTerm: selectRecipeSearchTerm(state),
+    baseLiquorFilter: selectBaseLiquorFilter(state),
+    selectedRecipeList: selectSelectedRecipeList(state)
   };
 }
 
