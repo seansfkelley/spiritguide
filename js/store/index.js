@@ -4,8 +4,8 @@ import createLogger from 'redux-logger';
 import { combineReducers, applyMiddleware, createStore, compose } from 'redux';
 import Promise from 'bluebird';
 import { AsyncStorage } from 'react-native';
-import persistState, { mergePersistedState } from 'redux-localstorage';
-import adapter from 'redux-localstorage/lib/adapters/AsyncStorage'
+import persistState, { mergePersistedState } from 'redux-localstorage-fix-localstorage-fork';
+import adapter from 'redux-localstorage-fix-localstorage-fork/lib/adapters/AsyncStorage'
 import filter from 'redux-localstorage-filter';
 import debounce from 'redux-localstorage-debounce';
 
