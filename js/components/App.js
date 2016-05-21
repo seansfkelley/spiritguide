@@ -20,11 +20,14 @@ import {
   IOS_STATUS_BAR_STYLE
 } from './constants';
 import {
+  initialLoadComplete,
   selectBaseLiquorFilter,
   selectFilteredAlphabeticalRecipes,
   selectFilteredGroupedAlphabeticalRecipes,
   selectFilteredGroupedIngredients,
+  selectIsInitialLoadComplete,
   selectRecipeSearchTerm,
+  selectSelectedIngredientTags,
   selectSelectedRecipeList
 } from '../store/selectors';
 import {
@@ -243,11 +246,11 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    initialLoadComplete: state.app.initialLoadComplete,
+    initialLoadComplete: selectIsInitialLoadComplete(state),
     filteredAlphabeticalRecipes: selectFilteredAlphabeticalRecipes(state),
     filteredGroupedAlphabeticalRecipes: selectFilteredGroupedAlphabeticalRecipes(state),
     filteredGroupedIngredients: selectFilteredGroupedIngredients(state),
-    selectedIngredientTags: state.filters.selectedIngredientTags,
+    selectedIngredientTags: selectSelectedIngredientTags(state),
     recipeSearchTerm: selectRecipeSearchTerm(state),
     baseLiquorFilter: selectBaseLiquorFilter(state),
     selectedRecipeList: selectSelectedRecipeList(state)

@@ -7,6 +7,7 @@ import {
   selectBaseLiquorFilter,
   selectRecipeSearchTerm,
   selectIngredientsByTag,
+  selectRecipeIds,
   selectRecipesById,
   selectSelectedRecipeList,
   selectFavoritedRecipeIds,
@@ -20,8 +21,9 @@ const _nofilter = () => true;
 const WHITESPACE_REGEX = /\s+/g;
 
 export const selectAlphabeticalRecipes = createSelector(
+  selectRecipeIds,
   selectRecipesById,
-  (recipesById) => _.chain(recipesById).values().sortBy('sortName').value()
+  (recipeIds, recipesById) => _.chain(recipesById).pick(recipeIds).values().sortBy('sortName').value()
 );
 
 export const _selectIngredientSplitsByRecipeId = createSelector(

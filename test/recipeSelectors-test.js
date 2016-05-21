@@ -22,7 +22,7 @@ describe('selectAlphabeticalRecipes', () => {
   };
 
   it('should sort alphabetically by \'sortName\', ignoring numerical ordering', () => {
-    _.map(selector(RECIPES_BY_ID), 'sortName').should.deep.equal([
+    _.map(selector(_.keys(RECIPES_BY_ID), RECIPES_BY_ID), 'sortName').should.deep.equal([
       '1',
       '10',
       '2',
@@ -30,6 +30,14 @@ describe('selectAlphabeticalRecipes', () => {
       'a2',
       'b'
     ]);
+  });
+
+  it('should not select recipes whose IDs aren\'t given', () => {
+    selector([ 'id1' ], RECIPES_BY_ID).should.deep.equal([ RECIPES_BY_ID.id1 ]);
+  });
+
+  it('should ignore recipe IDs that have no entry in the map', () => {
+    selector([ 'id1', 'foo' ], RECIPES_BY_ID).should.deep.equal([ RECIPES_BY_ID.id1 ]);
   });
 });
 
