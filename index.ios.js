@@ -10,7 +10,8 @@ import { AppRegistry, StyleSheet, View, AsyncStorage } from 'react-native';
 import { Provider } from 'react-redux';
 
 import App from './js/components/App';
-import store, { initializeStore } from './js/store';
+import store from './js/store';
+import initializeStore from './js/store/init';
 import * as selectors from './js/store/selectors';
 
 initializeStore();
