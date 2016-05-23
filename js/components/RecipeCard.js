@@ -6,7 +6,7 @@ import PureRender from 'pure-render-decorator';
 
 import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
 import { recipe } from './propTypes';
-import { DEFAULT_SERIF_FONT_FAMILY } from './constants';
+import { DEFAULT_SERIF_FONT_FAMILY, DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
 import MeasuredIngredient from './MeasuredIngredient';
 import InstructionStep from './InstructionStep';
 
@@ -39,16 +39,17 @@ export default class RecipeCard extends React.Component {
     return (
       <View style={[ styles.card, this.props.style ]}>
         <Text style={styles.titleText}>{recipe.name}</Text>
-        <ScrollView style={styles.recipeBody}>
+        <ListView
+          style={styles.ingredientList}
+          scrollEnabled={false}
+          dataSource={ingredients}
+          renderRow={this._renderIngredientRow}
+          initialListSize={Infinity}
+          style={styles.ingredientList}
+        />
+        <ScrollView style={styles.recipeText}>
           <ListView
-            enableScroll={false}
-            dataSource={ingredients}
-            renderRow={this._renderIngredientRow}
-            initialListSize={Infinity}
-            style={styles.ingredientList}
-          />
-          <ListView
-            enableScroll={false}
+            scrollEnabled={false}
             dataSource={instructions}
             renderRow={this._renderInstructionRow}
             initialListSize={Infinity}
@@ -131,8 +132,11 @@ const styles = StyleSheet.create({
     fontFamily: DEFAULT_SERIF_FONT_FAMILY,
     fontSize: 20
   },
-  recipeBody: {
-    flex: 1,
+  ingredientList: {
+    flex: 0
+  },
+  recipeText: {
+    // flex: 1,
     marginTop: 12
   },
   ingredientList: {
@@ -146,6 +150,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   instructionList: {
+    marginTop: 12
+  },
+  notes: {
+    marginTop: 12,
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY,
+    fontStyle: 'italic',
+    fontSize: 16
+  },
+  sourceButton: {
     marginTop: 12
   },
   footer: {
