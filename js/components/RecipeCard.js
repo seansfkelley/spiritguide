@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import { View, ListView, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, ListView, ScrollView, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PureRender from 'pure-render-decorator';
 
@@ -34,10 +34,11 @@ export default class RecipeCard extends React.Component {
 
   render() {
     const { ingredients, instructions } = this.state.dataSources;
+    const recipe = this.props.recipe;
 
     return (
       <View style={[ styles.card, this.props.style ]}>
-        <Text style={styles.titleText}>{this.props.recipe.name}</Text>
+        <Text style={styles.titleText}>{recipe.name}</Text>
         <ScrollView style={styles.recipeBody}>
           <ListView
             enableScroll={false}
@@ -53,12 +54,26 @@ export default class RecipeCard extends React.Component {
             initialListSize={Infinity}
             style={styles.instructionList}
           />
+        {recipe.notes
+          ? <Text style={styles.notes}>{recipe.notes}</Text>
+          : null
+        }
+        {recipe.source && recipe.url
+          ? <Icon.Button
+              style={styles.sourceButton}
+              name='external-link'
+              onPress={this._openUrl}
+            >
+              {recipe.source}
+            </Icon.Button>
+          : null
+        }
         </ScrollView>
         <View style={styles.footer}>
           <Icon.Button
             style={styles.footerButton}
             name={this.props.isFavorited ? 'star' : 'star-o'}
-            onPress={this.props.onFavoriteChange.bind(this, this.props.recipe.recipeId, !this.props.isFavorited)}
+            onPress={this.props.onFavoriteChange.bind(this, recipe.recipeId, !this.props.isFavorited)}
           >
             {this.props.isFavorited ? 'Unfavorite' : 'Favorite'}
           </Icon.Button>
@@ -100,6 +115,10 @@ export default class RecipeCard extends React.Component {
         style={styles.instructionRow}
       />
     );
+  };
+
+  _openUrl = () => {
+    Linking.openURL(this.props.recipe.url);
   };
 }
 
