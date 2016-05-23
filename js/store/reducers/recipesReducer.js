@@ -35,15 +35,16 @@ export default function reduceRecipes(state = EMPTY_STORE, action) {
         recipesById: { $omit: action.payload }
       });
 
-    case ActionType.FAVORITE_RECIPE:
-      return update(state, {
-        favoritedRecipeIds: { $push: action.payload }
-      });
-
-    case ActionType.UNFAVORITE_RECIPE:
-      return update(state, {
-        favoritedRecipeIds: { $without: action.payload }
-      });
+    case ActionType.SET_FAVORITE_RECIPE:
+      if (action.payload.isFavorited) {
+        return update(state, {
+          favoritedRecipeIds: { $push: [action.payload.recipeId ] }
+        });
+      } else {
+        return update(state, {
+          favoritedRecipeIds: { $without: action.payload.recipeId }
+        });
+      }
 
     default:
       return state;

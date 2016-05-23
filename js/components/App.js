@@ -171,7 +171,7 @@ class App extends React.Component {
           <View style={styles.container}>
             <StatusBar hidden={true} barStyle={IOS_STATUS_BAR_STYLE}/>
             <SwipableRecipeCards
-              recipes={this.props.filteredAlphabeticalRecipes}
+              initialRecipes={this.props.filteredAlphabeticalRecipes}
               initialIndex={initialIndex}
             />
           </View>

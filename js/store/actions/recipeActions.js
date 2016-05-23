@@ -31,16 +31,12 @@ export function loadRecipes(recipeIds) {
   };
 }
 
-export function favoriteRecipe(payload) {
+export function setFavoriteRecipe(recipeId, isFavorited) {
   return {
-    type: ActionType.FAVORITE_RECIPE,
-    payload
-  };
-}
-
-export function unfavoriteRecipe(payload) {
-  return {
-    type: ActionType.UNFAVORITE_RECIPE,
-    payload
+    type: ActionType.SET_FAVORITE_RECIPE,
+    payload: {
+      recipeId,
+      isFavorited
+    }
   };
 }

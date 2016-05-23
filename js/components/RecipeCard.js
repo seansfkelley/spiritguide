@@ -55,14 +55,13 @@ export default class RecipeCard extends React.Component {
           />
         </ScrollView>
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.footerButton}>
-            <Icon.Button
-              name={this.props.isFavorited ? 'star' : 'star-o'}
-              onPress={this.props.onFavoriteChange.bind(this, this.props.recipe, !this.props.isFavorited)}
-            >
-              {this.props.isFavorited ? 'Unfavorite' : 'Favorite'}
-            </Icon.Button>
-          </TouchableOpacity>
+          <Icon.Button
+            style={styles.footerButton}
+            name={this.props.isFavorited ? 'star' : 'star-o'}
+            onPress={this.props.onFavoriteChange.bind(this, this.props.recipe.recipeId, !this.props.isFavorited)}
+          >
+            {this.props.isFavorited ? 'Unfavorite' : 'Favorite'}
+          </Icon.Button>
         </View>
       </View>
     );
