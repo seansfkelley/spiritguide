@@ -41,7 +41,14 @@ export default class SwipableRecipeCards extends React.Component {
         >
           {this.props.recipes.map((recipe, i) =>
             Math.abs(i - this.state.currentIndex) <= 2
-              ? <RecipeCard recipe={recipe} style={cardStyle} key={recipe.recipeId}/>
+              ? <RecipeCard
+                  recipe={recipe}
+                  style={cardStyle}
+                  key={recipe.recipeId}
+                  isFavorited={true}
+                  onFavoriteChange={console.log.bind(console)}
+                  onShare={console.log.bind(console)}
+                />
               : <View style={cardStyle} key={recipe.recipeId}/> // Placeholder.
           )}
         </ScrollView>

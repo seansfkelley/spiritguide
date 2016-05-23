@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
-import { View, ListView, ScrollView, Text, StyleSheet } from 'react-native';
+import { View, ListView, ScrollView, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import PureRender from 'pure-render-decorator';
 
 import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
@@ -13,7 +14,10 @@ import InstructionStep from './InstructionStep';
 export default class RecipeCard extends React.Component {
   static propTypes = {
     recipe: recipe.isRequired,
-    style: View.propTypes.style
+    style: View.propTypes.style,
+    isFavorited: React.PropTypes.bool.isRequired,
+    onFavoriteChange: React.PropTypes.func.isRequired,
+    onShare: React.PropTypes.func.isRequired
   };
 
   state = {
@@ -50,6 +54,16 @@ export default class RecipeCard extends React.Component {
             style={styles.instructionList}
           />
         </ScrollView>
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.footerButton}>
+            <Icon.Button
+              name={this.props.isFavorited ? 'star' : 'star-o'}
+              onPress={this.props.onFavoriteChange.bind(this, this.props.recipe, !this.props.isFavorited)}
+            >
+              {this.props.isFavorited ? 'Unfavorite' : 'Favorite'}
+            </Icon.Button>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -115,5 +129,11 @@ const styles = StyleSheet.create({
   },
   instructionList: {
     marginTop: 12
+  },
+  footer: {
+    height: 44
+  },
+  footerButton: {
+    flex: 1
   }
 });

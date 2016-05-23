@@ -30,3 +30,17 @@ export function loadRecipes(recipeIds) {
     }
   };
 }
+
+export function favoriteRecipe(payload) {
+  return {
+    type: ActionType.FAVORITE_RECIPE,
+    payload
+  };
+}
+
+export function unfavoriteRecipe(payload) {
+  return {
+    type: ActionType.UNFAVORITE_RECIPE,
+    payload
+  };
+}
