@@ -35,31 +35,53 @@ export default class MeasuredIngredient extends React.Component {
     const difficultyColor = DIFFICULTY_COLOR[this.props.difficulty];
     return (
       <View style={[ styles.container, this.props.style ]}>
-        <View style={styles.amountWrapper}>
-          <Text style={styles.amount}>{fractionify(this.props.ingredient.displayAmount)}</Text>
-          <Text style={styles.unit}>{_.get(this.props.ingredient, 'displayUnit', '').toUpperCase()}</Text>
+        <View style={styles.mainRow}>
+          <View style={styles.amountWrapper}>
+            <Text style={styles.amount}>{fractionify(this.props.ingredient.displayAmount)}</Text>
+            <Text style={styles.unit}>{_.get(this.props.ingredient, 'displayUnit', '').toUpperCase()}</Text>
+          </View>
+          <View style={styles.ingredientWrapper}>
+            <Text style={[
+              styles.ingredient,
+              this.props.isMissing || this.props.isSubstituted ? styles.missing : null
+            ]}>
+              {this.props.ingredient.displayIngredient}
+            </Text>
+            {this.props.isMissing && this.props.difficulty
+              ? <Text style={[ styles.difficulty, { color: difficultyColor, borderColor: difficultyColor } ]}>
+                  {DIFFICULTY_TEXT[this.props.difficulty].toUpperCase()}
+                </Text>
+              : null}
+          </View>
         </View>
-        <View style={styles.ingredientWrapper}>
-          <Text style={[
-            styles.ingredient,
-            this.props.isMissing || this.props.isSubstituted ? styles.missing : null
-          ]}>
-            {this.props.ingredient.displayIngredient}
-          </Text>
-          {this.props.isMissing && this.props.difficulty
-            ? <Text style={[ styles.difficulty, { color: difficultyColor, borderColor: difficultyColor } ]}>
-                {DIFFICULTY_TEXT[this.props.difficulty].toUpperCase()}
-              </Text>
-            : null}
-        </View>
+        {this.props.isSubstituted && this.props.displaySubstitutes
+          ? <View style={styles.substituteList}>
+              {this._formatSubstitutes()}
+            </View>
+          : null}
       </View>
+    );
+  }
+
+  _formatSubstitutes() {
+    const substitutes = this.props.displaySubstitutes;
+    let text;
+    if (substitutes.length === 1) {
+      text = substitutes[0];
+    } else {
+      text = `${substitutes.slice(0, substitutes.length - 1).join(', ')} or ${substitutes[substitutes.length - 1]}`;
+    }
+    return (
+      <Text style={styles.substitutes}>substitute: {text}</Text>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    padding: 10
+  },
+  mainRow: {
     flexDirection: 'row',
     flexWrap: 'nowrap'
   },
@@ -101,5 +123,13 @@ const styles = StyleSheet.create({
     paddingRight: 2,
     marginLeft: 6,
     lineHeight: 14
+  },
+  substituteList: {
+    paddingLeft: 30,
+    paddingTop: 5,
+  },
+  substitutes: {
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY,
+    color: '#444'
   }
 });

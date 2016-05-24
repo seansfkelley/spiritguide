@@ -31,7 +31,8 @@ export const selectIngredientSplitsByRecipeId = createSelector(
   selectIngredientsByTag,
   selectSelectedIngredientTags,
   (alphabeticalRecipes, ingredientsByTag, selectedIngredientTags) => {
-    return ingredientSplitsByRecipeId(alphabeticalRecipes, ingredientsByTag, _.keys(selectedIngredientTags));
+    const tagList = _.keys(_.pickBy(selectedIngredientTags));
+    return ingredientSplitsByRecipeId(alphabeticalRecipes, ingredientsByTag, tagList);
   }
 );
 
