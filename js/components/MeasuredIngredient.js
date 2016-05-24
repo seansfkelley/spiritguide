@@ -6,7 +6,8 @@ import PureRender from 'pure-render-decorator';
 import { measuredIngredient } from './propTypes';
 import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
 import { fractionify } from '../util/format';
-import Difficulty, { DIFFICULTY_COLOR, DIFFICULTY_TEXT } from './Difficulty';
+import Difficulty from './Difficulty';
+import DifficultyPill from './DifficultyPill';
 
 @PureRender
 export default class MeasuredIngredient extends React.Component {
@@ -20,7 +21,6 @@ export default class MeasuredIngredient extends React.Component {
   };
 
   render() {
-    const difficultyColor = DIFFICULTY_COLOR[this.props.difficulty];
     return (
       <View style={[ styles.container, this.props.style ]}>
         <View style={styles.mainRow}>
@@ -36,9 +36,7 @@ export default class MeasuredIngredient extends React.Component {
               {this.props.ingredient.displayIngredient}
             </Text>
             {this.props.isMissing && this.props.difficulty
-              ? <Text style={[ styles.difficulty, { color: difficultyColor, borderColor: difficultyColor } ]}>
-                  {DIFFICULTY_TEXT[this.props.difficulty].toUpperCase()}
-                </Text>
+              ? <DifficultyPill difficulty={this.props.difficulty}/>
               : null}
           </View>
         </View>
@@ -100,17 +98,6 @@ const styles = StyleSheet.create({
   missing: {
     color: '#666',
     fontStyle: 'italic'
-  },
-  difficulty: {
-    borderWidth: 1,
-    borderRadius: 3,
-    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY,
-    fontSize: 10,
-    paddingTop: 3,
-    paddingLeft: 4,
-    paddingRight: 2,
-    marginLeft: 6,
-    lineHeight: 14
   },
   substituteList: {
     paddingLeft: 30,

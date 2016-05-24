@@ -3,7 +3,6 @@ import {
   View,
   Navigator,
   StatusBar,
-  ActivityIndicatorIOS,
   StyleSheet,
   Text
 } from 'react-native';
@@ -20,12 +19,10 @@ import {
   IOS_STATUS_BAR_STYLE
 } from './constants';
 import {
-  initialLoadComplete,
   selectBaseLiquorFilter,
   selectFilteredAlphabeticalRecipes,
   selectFilteredGroupedAlphabeticalRecipes,
   selectFilteredGroupedIngredients,
-  selectIsInitialLoadComplete,
   selectRecipeSearchTerm,
   selectSelectedIngredientTags,
   selectSelectedRecipeList,
@@ -63,7 +60,6 @@ const RECIPE_LIST_OPTIONS = RECIPE_LIST_TYPES.map(t => ({
 @PureRender
 class App extends React.Component {
   static propTypes = {
-    initialLoadComplete: React.PropTypes.bool.isRequired,
     filteredAlphabeticalRecipes: React.PropTypes.arrayOf(recipe).isRequired,
     filteredGroupedAlphabeticalRecipes: React.PropTypes.arrayOf(React.PropTypes.shape({
       groupName: React.PropTypes.string.isRequired,
@@ -83,21 +79,13 @@ class App extends React.Component {
   };
 
   render() {
-    if (this.props.initialLoadComplete) {
-      return (
-        <Navigator
-          initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 1, rowIndex: 7 }}
-          configureScene={this._configureScene}
-          renderScene={this._renderScene}
-        />
-      );
-    } else {
-      return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicatorIOS size='large'/>
-        </View>
-      );
-    }
+    return (
+      <Navigator
+        initialRoute={{ type: RouteType.RECIPE_LIST, sectionIndex: 1, rowIndex: 7 }}
+        configureScene={this._configureScene}
+        renderScene={this._renderScene}
+      />
+    );
   }
 
   _configureScene = (route, routeStack) => {
@@ -225,11 +213,6 @@ const styles = StyleSheet.create({
     height: IOS_STATUS_BAR_HEIGHT,
     backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
   ingredientSidebar: {
     paddingTop: IOS_STATUS_BAR_HEIGHT,
     backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
@@ -252,7 +235,6 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    initialLoadComplete: selectIsInitialLoadComplete(state),
     filteredAlphabeticalRecipes: selectFilteredAlphabeticalRecipes(state),
     filteredGroupedAlphabeticalRecipes: selectFilteredGroupedAlphabeticalRecipes(state),
     filteredGroupedIngredients: selectFilteredGroupedIngredients(state),

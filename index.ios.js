@@ -9,7 +9,7 @@ import React from 'react';
 import { AppRegistry, StyleSheet, View, AsyncStorage } from 'react-native';
 import { Provider } from 'react-redux';
 
-import App from './js/components/App';
+import AppWithLoadingScreen from './js/components/AppWithLoadingScreen';
 import store from './js/store';
 import initializeStore from './js/store/init';
 import * as selectors from './js/store/selectors';
@@ -21,7 +21,7 @@ class SpiritGuideApp extends React.Component {
     return (
       <Provider store={store}>
         <View style={styles.app}>
-          <App/>
+          <AppWithLoadingScreen/>
         </View>
       </Provider>
     );

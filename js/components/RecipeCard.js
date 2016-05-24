@@ -21,7 +21,7 @@ const ORDERED_INGREDIENT_CATEGORIES = [
     getProps: (ingredient, props) => ({
       ingredient,
       isMissing: true,
-      difficulty: Difficulty[props.ingredientsByTag[ingredient.tag].difficulty.toUpperCase()]
+      difficulty: Difficulty.of(props.ingredientsByTag[ingredient.tag].difficulty)
     })
   }, {
     key: 'substitute',

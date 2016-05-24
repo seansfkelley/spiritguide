@@ -12,7 +12,8 @@ import {
   makeGetRowData,
   shallowEqualHasChanged
 } from './util/listViewDataSourceUtils';
-import { getHardest } from './Difficulty';
+import Difficulty, { getHardest } from './Difficulty';
+import DifficultyPill from './DifficultyPill';
 
 const SEARCH_BAR_SENTINEL = Symbol('SEARCH_BAR_SENTINEL');
 const NO_RESULTS_SENTINEL = Symbol('NO_RESULTS_SENTINEL');
@@ -85,11 +86,13 @@ export default class RecipeList extends React.Component {
     } else {
       return (
         <TouchableHighlight
-          style={styles.row}
           underlayColor='#f6f6f6'
           onPress={this.props.onPress.bind(null, +sectionId - 1, +rowId)}
         >
-          <Text style={styles.rowText}>{rowData.name} {rowData.difficulty && rowData.difficulty.toString()}</Text>
+          <View style={styles.row}>
+            <Text style={styles.rowText}>{rowData.name}</Text>
+            {rowData.difficulty ? <DifficultyPill difficulty={rowData.difficulty}/> : null}
+          </View>
         </TouchableHighlight>
       );
     }
@@ -120,13 +123,14 @@ export default class RecipeList extends React.Component {
     const mungedGroupedRecipes = groupedRecipes.map(group => ({
       groupName: group.groupName,
       recipes: group.recipes.map(r => {
-        const missingIngredients = props.ingredientSplitsByRecipeId[r.recipeId].missing;
+        const { missing } = props.ingredientSplitsByRecipeId[r.recipeId];
         let difficulty;
-        if (missingIngredients.length) {
-          difficulty = getHardest(_.chain(missingIngredients)
+        if (missing.length) {
+          difficulty = getHardest(_.chain(missing)
             .map('tag')
             .map((tag) => this.props.ingredientsByTag[tag])
             .map('difficulty')
+            .map(difficulty => Difficulty.of(difficulty))
             .value()
           );
         }
@@ -189,7 +193,10 @@ const styles = StyleSheet.create({
   },
   row: {
     backgroundColor: '#fff',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center'
   },
   rowText: {
     fontSize: 16,

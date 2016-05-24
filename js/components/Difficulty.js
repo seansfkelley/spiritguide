@@ -8,6 +8,19 @@ const Difficulty = enumeration(
 
 const ORDERED_DIFFICULTIES = [ Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD ];
 
+Difficulty.of = function(stringOrDifficulty) {
+  if (ORDERED_DIFFICULTIES.indexOf(stringOrDifficulty) !== -1) {
+    return stringOrDifficulty;
+  } else {
+    const parsedDifficulty = Difficulty[stringOrDifficulty.toUpperCase()];
+    if (parsedDifficulty) {
+      return parsedDifficulty;
+    } else {
+      throw new Error(`Cannot determine difficulty for input ${stringOrDifficulty}`);
+    }
+  }
+}
+
 export const DIFFICULTY_COLOR = {
   [Difficulty.EASY]: 'green',
   [Difficulty.MEDIUM]: 'orange',
