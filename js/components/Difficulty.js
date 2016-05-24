@@ -1,3 +1,4 @@
+import log from 'loglevel';
 import enumeration from '../util/enum';
 
 const Difficulty = enumeration(
@@ -16,7 +17,8 @@ Difficulty.of = function(stringOrDifficulty) {
     if (parsedDifficulty) {
       return parsedDifficulty;
     } else {
-      throw new Error(`Cannot determine difficulty for input ${stringOrDifficulty}`);
+      log.warn(`Cannot determine difficulty for input ${stringOrDifficulty}`);
+      return null;
     }
   }
 }

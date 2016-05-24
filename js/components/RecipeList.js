@@ -90,7 +90,7 @@ export default class RecipeList extends React.Component {
           onPress={this.props.onPress.bind(null, +sectionId - 1, +rowId)}
         >
           <View style={styles.row}>
-            <Text style={styles.rowText}>{rowData.name}</Text>
+            <Text style={[ styles.rowText, rowData.difficulty ? styles.unmixable : null ]}>{rowData.name}</Text>
             {rowData.difficulty ? <DifficultyPill difficulty={rowData.difficulty}/> : null}
           </View>
         </TouchableHighlight>
@@ -130,6 +130,7 @@ export default class RecipeList extends React.Component {
             .map('tag')
             .map((tag) => this.props.ingredientsByTag[tag])
             .map('difficulty')
+            .compact()
             .map(difficulty => Difficulty.of(difficulty))
             .value()
           );
@@ -203,6 +204,10 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     paddingVertical: 12,
     fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
+  },
+  unmixable: {
+    fontStyle: 'italic',
+    color: '#888'
   },
   header: {
     justifyContent: 'center',
