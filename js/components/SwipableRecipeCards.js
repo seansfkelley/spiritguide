@@ -64,7 +64,7 @@ class SwipableRecipeCards extends React.Component {
               this.state.currentIndex === 0 ? styles.headerButtonDisabled : null
             ]}
             name='chevron-left'
-            onPress={this._goLeft}
+            onPress={this._changeIndex.bind(this, -1)}
             {...buttonStyles}
           />
           <View style={styles.headerSpacer}/>
@@ -75,7 +75,7 @@ class SwipableRecipeCards extends React.Component {
               this.state.currentIndex === this.state.recipes.length - 1 ? styles.headerButtonDisabled : null
             ]}
             name='chevron-right'
-            onPress={this._goRight}
+            onPress={this._changeIndex.bind(this, 1)}
             {...buttonStyles}
           />
         </View>
@@ -95,27 +95,22 @@ class SwipableRecipeCards extends React.Component {
   _onScroll = (event) => {
     const { width } = Dimensions.get('window');
     const xOffset = event.nativeEvent.contentOffset.x;
-    this.setState({
-      currentIndex: Math.floor((xOffset + width / 2) / width)
-    });
+    const currentIndex = Math.floor((xOffset + width / 2) / width);
+    if (currentIndex >= 0 && currentIndex < this.state.recipes.length) {
+      this.setState({ currentIndex });
+    }
   };
 
-  _goLeft = () => {
-    const { width } = Dimensions.get('window');
-    this.refs.scroll.scrollTo({
-      x: width * (this.state.currentIndex - 1),
-      y: 0,
-      animated: true
-    });
-  };
-
-  _goRight = () => {
-    const { width } = Dimensions.get('window');
-    this.refs.scroll.scrollTo({
-      x: width * (this.state.currentIndex + 1),
-      y: 0,
-      animated: true
-    });
+  _changeIndex = (indexChange) => {
+    const targetIndex = this.state.currentIndex + indexChange;
+    if (targetIndex >= 0 && targetIndex < this.state.recipes.length) {
+      const { width } = Dimensions.get('window');
+      this.refs.scroll.scrollTo({
+        x: width * targetIndex,
+        y: 0,
+        animated: true
+      });
+    }
   };
 }
 
