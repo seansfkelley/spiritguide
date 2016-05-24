@@ -6,19 +6,7 @@ import PureRender from 'pure-render-decorator';
 import { measuredIngredient } from './propTypes';
 import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
 import { fractionify } from '../util/format';
-import Difficulty from './Difficulty';
-
-const DIFFICULTY_COLOR = {
-  [Difficulty.EASY]: 'green',
-  [Difficulty.MEDIUM]: 'orange',
-  [Difficulty.HARD]: 'red'
-};
-
-const DIFFICULTY_TEXT = {
-  [Difficulty.EASY]: 'easy',
-  [Difficulty.MEDIUM]: 'moderate',
-  [Difficulty.HARD]: 'difficult'
-};
+import Difficulty, { DIFFICULTY_COLOR, DIFFICULTY_TEXT } from './Difficulty';
 
 @PureRender
 export default class MeasuredIngredient extends React.Component {
