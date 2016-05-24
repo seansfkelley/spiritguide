@@ -3,7 +3,7 @@ import { View, ListView, Text, TouchableHighlight, StyleSheet } from 'react-nati
 import SearchBar from 'react-native-search-bar';
 import PureRender from 'pure-render-decorator';
 
-import { recipe } from './propTypes';
+import { recipe, ingredient, ingredientSplits } from './propTypes';
 import { DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
 import {
   copyWithPrependedSentinel,
@@ -12,6 +12,7 @@ import {
   makeGetRowData,
   shallowEqualHasChanged
 } from './util/listViewDataSourceUtils';
+import { getHardest } from './Difficulty';
 
 const SEARCH_BAR_SENTINEL = Symbol('SEARCH_BAR_SENTINEL');
 const NO_RESULTS_SENTINEL = Symbol('NO_RESULTS_SENTINEL');
@@ -25,11 +26,13 @@ export default class RecipeList extends React.Component {
     })).isRequired,
     onPress: React.PropTypes.func.isRequired,
     searchTerm: React.PropTypes.string.isRequired,
-    onSearchTermChange: React.PropTypes.func.isRequired
+    onSearchTermChange: React.PropTypes.func.isRequired,
+    ingredientSplitsByRecipeId: React.PropTypes.objectOf(ingredientSplits).isRequired,
+    ingredientsByTag: React.PropTypes.objectOf(ingredient).isRequired
   };
 
   state = {
-    dataSource: this._recomputeDataSource(null, this.props.groupedRecipes)
+    dataSource: this._recomputeDataSource(null, this.props)
   };
 
   componentDidMount() {
@@ -39,10 +42,10 @@ export default class RecipeList extends React.Component {
     }
   }
 
-  componentWillReceiveProps(props) {
-    if (this.props.groupedRecipes !== props.groupedRecipes) {
+  componentWillReceiveProps(nextProps) {
+    if (this.props !== nextProps) {
       this.setState({
-        dataSource: this._recomputeDataSource(this.state.dataSource, props.groupedRecipes)
+        dataSource: this._recomputeDataSource(this.state.dataSource, nextProps)
       });
     }
   }
@@ -86,7 +89,7 @@ export default class RecipeList extends React.Component {
           underlayColor='#f6f6f6'
           onPress={this.props.onPress.bind(null, +sectionId - 1, +rowId)}
         >
-          <Text style={styles.rowText}>{rowData.name}</Text>
+          <Text style={styles.rowText}>{rowData.name} {rowData.difficulty && rowData.difficulty.toString()}</Text>
         </TouchableHighlight>
       );
     }
@@ -111,9 +114,31 @@ export default class RecipeList extends React.Component {
     }
   };
 
-  _recomputeDataSource(dataSource, groupedRecipes) {
-    let recipesWithSentinels = groupedRecipes;
-    if (groupedRecipes.length === 0) {
+  _recomputeDataSource(dataSource, props) {
+    const { groupedRecipes, ingredientSplitsByRecipeId, ingredientsByTag } = props;
+
+    const mungedGroupedRecipes = groupedRecipes.map(group => ({
+      groupName: group.groupName,
+      recipes: group.recipes.map(r => {
+        const missingIngredients = props.ingredientSplitsByRecipeId[r.recipeId].missing;
+        let difficulty;
+        if (missingIngredients.length) {
+          difficulty = getHardest(_.chain(missingIngredients)
+            .map('tag')
+            .map((tag) => this.props.ingredientsByTag[tag])
+            .map('difficulty')
+            .value()
+          );
+        }
+        return {
+          name: r.name,
+          difficulty
+        };
+      })
+    }))
+
+    let recipesWithSentinels = mungedGroupedRecipes;
+    if (recipesWithSentinels.length === 0) {
       recipesWithSentinels = copyWithPrependedSentinel(
         recipesWithSentinels,
         'recipes',

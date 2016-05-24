@@ -28,7 +28,9 @@ import {
   selectIsInitialLoadComplete,
   selectRecipeSearchTerm,
   selectSelectedIngredientTags,
-  selectSelectedRecipeList
+  selectSelectedRecipeList,
+  selectIngredientSplitsByRecipeId,
+  selectIngredientsByTag
 } from '../store/selectors';
 import {
   ANY_BASE_LIQUOR,
@@ -37,7 +39,7 @@ import {
   RECIPE_LIST_NAMES
 } from '../definitions';
 import * as filterActions from '../store/actions/filterActions';
-import { recipe, ingredient } from './propTypes';
+import { recipe, ingredient, ingredientSplits } from './propTypes';
 import SwipeSelector from './SwipeSelector';
 import RecipeList from './RecipeList';
 import SwipableRecipeCards from './SwipableRecipeCards';
@@ -75,7 +77,9 @@ class App extends React.Component {
     filterActions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
     recipeSearchTerm: React.PropTypes.string.isRequired,
     baseLiquorFilter: React.PropTypes.string.isRequired,
-    selectedRecipeList: React.PropTypes.string.isRequired
+    selectedRecipeList: React.PropTypes.string.isRequired,
+    ingredientSplitsByRecipeId: React.PropTypes.objectOf(ingredientSplits).isRequired,
+    ingredientsByTag: React.PropTypes.objectOf(ingredient).isRequired
   };
 
   render() {
@@ -157,6 +161,8 @@ class App extends React.Component {
                 onPress={this._onRecipePress.bind(this, navigator)}
                 searchTerm={this.props.recipeSearchTerm}
                 onSearchTermChange={this.props.filterActions.setRecipeSearchTerm}
+                ingredientSplitsByRecipeId={this.props.ingredientSplitsByRecipeId}
+                ingredientsByTag={this.props.ingredientsByTag}
                 ref={(c) => this._recipeList = c}
               />
             </View>
@@ -253,7 +259,9 @@ function mapStateToProps(state) {
     selectedIngredientTags: selectSelectedIngredientTags(state),
     recipeSearchTerm: selectRecipeSearchTerm(state),
     baseLiquorFilter: selectBaseLiquorFilter(state),
-    selectedRecipeList: selectSelectedRecipeList(state)
+    selectedRecipeList: selectSelectedRecipeList(state),
+    ingredientSplitsByRecipeId: selectIngredientSplitsByRecipeId(state),
+    ingredientsByTag: selectIngredientsByTag(state)
   };
 }
 
