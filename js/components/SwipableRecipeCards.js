@@ -29,8 +29,8 @@ class SwipableRecipeCards extends React.Component {
   };
 
   render() {
-    const { width } = Dimensions.get('window');
-    const cardStyle = [{ width }, styles.card];
+    const { width, height } = Dimensions.get('window');
+    const cardStyle = [{ width, height }, styles.card];
     return (
       <View style={styles.container}>
         <View style={[ styles.header, styles.headerBackground ]}/>
@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
     flex: 1
   },
   card: {
-    flex: 1,
     overflow: 'hidden'
   }
 });

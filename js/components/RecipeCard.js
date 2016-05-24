@@ -65,13 +65,18 @@ export default class RecipeCard extends React.Component {
             : null
           }
           {recipe.source && recipe.url
-            ? <Icon.Button
-                style={styles.sourceButton}
-                name='external-link'
-                onPress={this._openUrl}
-              >
-                {recipe.source}
-              </Icon.Button>
+            ? <View style={styles.sourceButtonWrapper}>
+                <View style={styles.sourceButtonSpacer}/>
+                <Icon.Button
+                  style={styles.sourceButton}
+                  iconStyle={styles.sourceButtonIcon}
+                  name='external-link'
+                  onPress={this._openUrl}
+                  {...sourceButtonStyle}
+                >
+                  {recipe.source}
+                </Icon.Button>
+              </View>
             : null
           }
         </ScrollView>
@@ -80,8 +85,9 @@ export default class RecipeCard extends React.Component {
             style={styles.footerButton}
             name={this.props.isFavorited ? 'star' : 'star-o'}
             onPress={this.props.onFavoriteChange.bind(this, recipe.recipeId, !this.props.isFavorited)}
+            {...footerButtonStyle}
           >
-            {this.props.isFavorited ? 'Unfavorite' : 'Favorite'}
+            {this.props.isFavorited ? 'Favorited' : 'Favorite'}
           </Icon.Button>
         </View>
       </View>
@@ -128,9 +134,21 @@ export default class RecipeCard extends React.Component {
   };
 }
 
+const sourceButtonStyle = {
+  backgroundColor: 'transparent',
+  borderRadius: 0,
+  color: '#888',
+  size: 16
+};
+
+const footerButtonStyle = {
+  backgroundColor: 'transparent',
+  borderRadius: 0,
+  color: '#888'
+};
+
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
     flexDirection: 'column'
   },
   header: {
@@ -149,8 +167,8 @@ const styles = StyleSheet.create({
   },
   recipeBody: {
     flex: 1,
-    paddingTop: 10,
-    paddingHorizontal: 10
+    paddingTop: 20,
+    paddingHorizontal: 20
   },
   ingredientRow: {
     flex: 1
@@ -168,13 +186,28 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontSize: 16
   },
+  sourceButtonWrapper: {
+    marginTop: 12,
+    flexDirection: 'row'
+  },
+  sourceButtonSpacer: {
+    flex: 1
+  },
   sourceButton: {
-    marginTop: 12
+    justifyContent: 'flex-end'
+  },
+  sourceButtonIcon: {
+    color: '#aaa'
   },
   footer: {
-    height: 44
   },
   footerButton: {
-    flex: 1
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 44,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    borderTopColor: '#ddd'
   }
 });
