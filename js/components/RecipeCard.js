@@ -6,7 +6,11 @@ import PureRender from 'pure-render-decorator';
 
 import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
 import { recipe } from './propTypes';
-import { DEFAULT_SERIF_FONT_FAMILY, DEFAULT_SANS_SERIF_FONT_FAMILY } from './constants';
+import {
+  DEFAULT_SERIF_FONT_FAMILY,
+  DEFAULT_SANS_SERIF_FONT_FAMILY,
+  IOS_STATUS_BAR_BACKGROUND_COLOR
+} from './constants';
 import MeasuredIngredient from './MeasuredIngredient';
 import InstructionStep from './InstructionStep';
 
@@ -38,16 +42,17 @@ export default class RecipeCard extends React.Component {
 
     return (
       <View style={[ styles.card, this.props.style ]}>
-        <Text style={styles.titleText}>{recipe.name}</Text>
-        <ListView
-          style={styles.ingredientList}
-          scrollEnabled={false}
-          dataSource={ingredients}
-          renderRow={this._renderIngredientRow}
-          initialListSize={Infinity}
-          style={styles.ingredientList}
-        />
-        <ScrollView style={styles.recipeText}>
+        <View style={styles.header}>
+          <Text style={styles.titleText}>{recipe.name}</Text>
+        </View>
+        <ScrollView style={styles.recipeBody}>
+          <ListView
+            scrollEnabled={false}
+            dataSource={ingredients}
+            renderRow={this._renderIngredientRow}
+            initialListSize={Infinity}
+            style={styles.ingredientList}
+          />
           <ListView
             scrollEnabled={false}
             dataSource={instructions}
@@ -55,20 +60,20 @@ export default class RecipeCard extends React.Component {
             initialListSize={Infinity}
             style={styles.instructionList}
           />
-        {recipe.notes
-          ? <Text style={styles.notes}>{recipe.notes}</Text>
-          : null
-        }
-        {recipe.source && recipe.url
-          ? <Icon.Button
-              style={styles.sourceButton}
-              name='external-link'
-              onPress={this._openUrl}
-            >
-              {recipe.source}
-            </Icon.Button>
-          : null
-        }
+          {recipe.notes
+            ? <Text style={styles.notes}>{recipe.notes}</Text>
+            : null
+          }
+          {recipe.source && recipe.url
+            ? <Icon.Button
+                style={styles.sourceButton}
+                name='external-link'
+                onPress={this._openUrl}
+              >
+                {recipe.source}
+              </Icon.Button>
+            : null
+          }
         </ScrollView>
         <View style={styles.footer}>
           <Icon.Button
@@ -128,19 +133,24 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column'
   },
+  header: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    height: 44
+  },
   titleText: {
     fontFamily: DEFAULT_SERIF_FONT_FAMILY,
-    fontSize: 20
+    fontSize: 20,
+    color: '#eee'
   },
   ingredientList: {
     flex: 0
   },
-  recipeText: {
-    // flex: 1,
-    marginTop: 12
-  },
-  ingredientList: {
-
+  recipeBody: {
+    flex: 1,
+    paddingTop: 10,
+    paddingHorizontal: 10
   },
   ingredientRow: {
     flex: 1

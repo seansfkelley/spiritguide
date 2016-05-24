@@ -4,13 +4,14 @@ import PureRender from 'pure-render-decorator';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import {
+  DEFAULT_SERIF_FONT_FAMILY,
+  IOS_STATUS_BAR_BACKGROUND_COLOR
+} from './constants';
 import { recipe } from './propTypes';
 import RecipeCard from './RecipeCard';
 import { selectFavoritedRecipeIds } from '../store/selectors';
 import * as recipeActions from '../store/actions/recipeActions';
-
-const OVERFLOW_VISIBLE = 30;
-const INTER_CARD_SPACING = 8;
 
 // TODO: Replace this with horizontal ListView.
 @PureRender
@@ -27,22 +28,18 @@ class SwipableRecipeCards extends React.Component {
   };
 
   render() {
-    const { width, height } = Dimensions.get('window');
-    const containerSizing = { width, height };
-    const cardSizing = {
-      height: height - 2 * OVERFLOW_VISIBLE,
-      width: width - 2 * (OVERFLOW_VISIBLE + INTER_CARD_SPACING)
-    };
-    const cardStyle = [ cardSizing, styles.card ];
+    const { width } = Dimensions.get('window');
+    const cardStyle = [{ width }, styles.card];
     return (
-      <View style={[ containerSizing, styles.container ]}>
+      <View style={styles.container}>
+        <View style={styles.header}/>
         <ScrollView
           style={styles.scroll}
           horizontal={true}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
           onScroll={this._onScroll}
-          scrollEventThrottle={500}
+          scrollEventThrottle={100}
           ref='scroll'
         >
           {this.state.recipes.map((recipe, i) =>
@@ -63,38 +60,46 @@ class SwipableRecipeCards extends React.Component {
   }
 
   componentDidMount() {
+    const { width } = Dimensions.get('window');
     this.refs.scroll.scrollTo({
-      x: this._computePageSize() * this.props.initialIndex,
+      x: width * this.props.initialIndex,
       y: 0,
       animated: false
     });
   }
 
-  _computePageSize() {
-    return Dimensions.get('window').width - 2 * OVERFLOW_VISIBLE;
-  }
-
   _onScroll = (event) => {
+    const { width } = Dimensions.get('window');
     const xOffset = event.nativeEvent.contentOffset.x;
-    const pageSize = this._computePageSize();
     this.setState({
-      currentIndex: Math.floor((xOffset + pageSize / 2) / pageSize)
+      currentIndex: Math.floor((xOffset + width / 2) / width)
     });
   };
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 10,
-    paddingHorizontal: OVERFLOW_VISIBLE
+    flex: 1
+  },
+  header: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: 44,
+    backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
+  },
+  recipeTitle: {
+    fontFamily: DEFAULT_SERIF_FONT_FAMILY,
+    fontSize: 20,
+    color: '#eee'
   },
   scroll: {
-    flex: 1,
-    overflow: 'visible'
+    flex: 1
   },
   card: {
-    overflow: 'hidden',
-    marginHorizontal: INTER_CARD_SPACING
+    flex: 1,
+    overflow: 'hidden'
   }
 });
 
