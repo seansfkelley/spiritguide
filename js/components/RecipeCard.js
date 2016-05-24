@@ -100,7 +100,7 @@ export default class RecipeCard extends React.Component {
                   onPress={this._openUrl}
                   {...sourceButtonStyle}
                 >
-                  {recipe.source}
+                  <Text style={styles.buttonText}>{recipe.source}</Text>
                 </Icon.Button>
               </View>
             : null
@@ -113,7 +113,7 @@ export default class RecipeCard extends React.Component {
             onPress={this.props.onFavoriteChange.bind(this, recipe.recipeId, !this.props.isFavorited)}
             {...footerButtonStyle}
           >
-            {this.props.isFavorited ? 'Favorited' : 'Favorite'}
+            <Text style={styles.buttonText}>{this.props.isFavorited ? 'Favorited' : 'Favorite'}</Text>
           </Icon.Button>
         </View>
       </View>
@@ -240,5 +240,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'transparent',
     borderTopColor: '#ddd'
+  },
+  buttonText: {
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY
   }
 });
