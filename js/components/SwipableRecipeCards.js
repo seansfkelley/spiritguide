@@ -9,10 +9,11 @@ import {
   DEFAULT_SERIF_FONT_FAMILY,
   IOS_STATUS_BAR_BACKGROUND_COLOR
 } from './constants';
-import { recipe, ingredientSplits } from './propTypes';
+import { recipe, ingredient, ingredientSplits } from './propTypes';
 import RecipeCard from './RecipeCard';
 import {
   selectFavoritedRecipeIds,
+  selectIngredientsByTag,
   selectIngredientSplitsByRecipeId
 } from '../store/selectors';
 import * as recipeActions from '../store/actions/recipeActions';
@@ -23,7 +24,8 @@ class SwipableRecipeCards extends React.Component {
     initialRecipes: React.PropTypes.arrayOf(recipe).isRequired,
     initialIndex: React.PropTypes.number.isRequired,
     favoritedRecipeIds: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    ingredientSplitsByRecipeId: React.PropTypes.objectOf(ingredientSplits).isRequired
+    ingredientSplitsByRecipeId: React.PropTypes.objectOf(ingredientSplits).isRequired,
+    ingredientsByTag: React.PropTypes.objectOf(ingredient).isRequired
   };
 
   state = {
@@ -51,6 +53,7 @@ class SwipableRecipeCards extends React.Component {
               ? <RecipeCard
                   recipe={recipe}
                   ingredientSplits={this.props.ingredientSplitsByRecipeId[recipe.recipeId]}
+                  ingredientsByTag={this.props.ingredientsByTag}
                   style={cardStyle}
                   key={recipe.recipeId}
                   isFavorited={this.props.favoritedRecipeIds.indexOf(recipe.recipeId) !== -1}
@@ -174,6 +177,7 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
   return {
     favoritedRecipeIds: selectFavoritedRecipeIds(state),
+    ingredientsByTag: selectIngredientsByTag(state),
     ingredientSplitsByRecipeId: selectIngredientSplitsByRecipeId(state)
   };
 }

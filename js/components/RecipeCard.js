@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import PureRender from 'pure-render-decorator';
 
 import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
-import { recipe, ingredientSplits } from './propTypes';
+import { recipe, ingredient, ingredientSplits } from './propTypes';
 import {
   DEFAULT_SERIF_FONT_FAMILY,
   DEFAULT_SANS_SERIF_FONT_FAMILY,
@@ -13,25 +13,26 @@ import {
 } from './constants';
 import MeasuredIngredient from './MeasuredIngredient';
 import InstructionStep from './InstructionStep';
+import Difficulty from './Difficulty';
 
 const ORDERED_INGREDIENT_CATEGORIES = [
   {
     key: 'missing',
-    getProps: (ingredient) => ({
+    getProps: (ingredient, props) => ({
       ingredient,
       isMissing: true,
-      difficulty: null
+      difficulty: Difficulty[props.ingredientsByTag[ingredient.tag].difficulty.toUpperCase()]
     })
   }, {
     key: 'substitute',
-    getProps: ({ have, need }) => ({
+    getProps: ({ have, need }, props) => ({
       ingredient: need,
       isSubstituted: true,
       displaySubstitutes: have
     })
   }, {
     key: 'available',
-    getProps: (ingredient) => ({
+    getProps: (ingredient, props) => ({
       ingredient
     })
   }
@@ -42,6 +43,7 @@ export default class RecipeCard extends React.Component {
   static propTypes = {
     recipe: recipe.isRequired,
     ingredientSplits: ingredientSplits.isRequired,
+    ingredientsByTag: React.PropTypes.objectOf(ingredient).isRequired,
     style: View.propTypes.style,
     isFavorited: React.PropTypes.bool.isRequired,
     onFavoriteChange: React.PropTypes.func.isRequired,
@@ -123,7 +125,7 @@ export default class RecipeCard extends React.Component {
     const { ingredients, instructions } = (dataSources || {});
 
     const mungedIngredients = _.flatMap(ORDERED_INGREDIENT_CATEGORIES, ({ key, getProps }) => {
-      return ingredientSplits[key].map(getProps);
+      return ingredientSplits[key].map(s => getProps(s, props));
     });
 
     return {
