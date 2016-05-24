@@ -6,7 +6,11 @@ import PureRender from 'pure-render-decorator';
 
 import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
 import { recipe } from './propTypes';
-import { DEFAULT_SERIF_FONT_FAMILY } from './constants';
+import {
+  DEFAULT_SERIF_FONT_FAMILY,
+  DEFAULT_SANS_SERIF_FONT_FAMILY,
+  IOS_STATUS_BAR_BACKGROUND_COLOR
+} from './constants';
 import MeasuredIngredient from './MeasuredIngredient';
 import InstructionStep from './InstructionStep';
 
@@ -38,44 +42,52 @@ export default class RecipeCard extends React.Component {
 
     return (
       <View style={[ styles.card, this.props.style ]}>
-        <Text style={styles.titleText}>{recipe.name}</Text>
+        <View style={styles.header}>
+          <Text style={styles.titleText}>{recipe.name}</Text>
+        </View>
         <ScrollView style={styles.recipeBody}>
           <ListView
-            enableScroll={false}
+            scrollEnabled={false}
             dataSource={ingredients}
             renderRow={this._renderIngredientRow}
             initialListSize={Infinity}
             style={styles.ingredientList}
           />
           <ListView
-            enableScroll={false}
+            scrollEnabled={false}
             dataSource={instructions}
             renderRow={this._renderInstructionRow}
             initialListSize={Infinity}
             style={styles.instructionList}
           />
-        {recipe.notes
-          ? <Text style={styles.notes}>{recipe.notes}</Text>
-          : null
-        }
-        {recipe.source && recipe.url
-          ? <Icon.Button
-              style={styles.sourceButton}
-              name='external-link'
-              onPress={this._openUrl}
-            >
-              {recipe.source}
-            </Icon.Button>
-          : null
-        }
+          {recipe.notes
+            ? <Text style={styles.notes}>{recipe.notes}</Text>
+            : null
+          }
+          {recipe.source && recipe.url
+            ? <View style={styles.sourceButtonWrapper}>
+                <View style={styles.sourceButtonSpacer}/>
+                <Icon.Button
+                  style={styles.sourceButton}
+                  iconStyle={styles.sourceButtonIcon}
+                  name='external-link'
+                  onPress={this._openUrl}
+                  {...sourceButtonStyle}
+                >
+                  {recipe.source}
+                </Icon.Button>
+              </View>
+            : null
+          }
         </ScrollView>
         <View style={styles.footer}>
           <Icon.Button
             style={styles.footerButton}
             name={this.props.isFavorited ? 'star' : 'star-o'}
             onPress={this.props.onFavoriteChange.bind(this, recipe.recipeId, !this.props.isFavorited)}
+            {...footerButtonStyle}
           >
-            {this.props.isFavorited ? 'Unfavorite' : 'Favorite'}
+            {this.props.isFavorited ? 'Favorited' : 'Favorite'}
           </Icon.Button>
         </View>
       </View>
@@ -122,21 +134,41 @@ export default class RecipeCard extends React.Component {
   };
 }
 
+const sourceButtonStyle = {
+  backgroundColor: 'transparent',
+  borderRadius: 0,
+  color: '#888',
+  size: 16
+};
+
+const footerButtonStyle = {
+  backgroundColor: 'transparent',
+  borderRadius: 0,
+  color: '#888'
+};
+
 const styles = StyleSheet.create({
   card: {
-    flex: 1,
     flexDirection: 'column'
+  },
+  header: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    height: 44
   },
   titleText: {
     fontFamily: DEFAULT_SERIF_FONT_FAMILY,
-    fontSize: 20
+    fontSize: 20,
+    color: '#eee'
+  },
+  ingredientList: {
+    flex: 0
   },
   recipeBody: {
     flex: 1,
-    marginTop: 12
-  },
-  ingredientList: {
-
+    paddingTop: 20,
+    paddingHorizontal: 20
   },
   ingredientRow: {
     flex: 1
@@ -148,10 +180,34 @@ const styles = StyleSheet.create({
   instructionList: {
     marginTop: 12
   },
+  notes: {
+    marginTop: 12,
+    fontFamily: DEFAULT_SANS_SERIF_FONT_FAMILY,
+    fontStyle: 'italic',
+    fontSize: 16
+  },
+  sourceButtonWrapper: {
+    marginTop: 12,
+    flexDirection: 'row'
+  },
+  sourceButtonSpacer: {
+    flex: 1
+  },
+  sourceButton: {
+    justifyContent: 'flex-end'
+  },
+  sourceButtonIcon: {
+    color: '#aaa'
+  },
   footer: {
-    height: 44
   },
   footerButton: {
-    flex: 1
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 44,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    borderTopColor: '#ddd'
   }
 });

@@ -1,16 +1,18 @@
 import React from 'react';
 import { View, ScrollView, Text, StyleSheet, Dimensions } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import PureRender from 'pure-render-decorator';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import {
+  DEFAULT_SERIF_FONT_FAMILY,
+  IOS_STATUS_BAR_BACKGROUND_COLOR
+} from './constants';
 import { recipe } from './propTypes';
 import RecipeCard from './RecipeCard';
 import { selectFavoritedRecipeIds } from '../store/selectors';
 import * as recipeActions from '../store/actions/recipeActions';
-
-const OVERFLOW_VISIBLE = 30;
-const INTER_CARD_SPACING = 8;
 
 // TODO: Replace this with horizontal ListView.
 @PureRender
@@ -28,21 +30,17 @@ class SwipableRecipeCards extends React.Component {
 
   render() {
     const { width, height } = Dimensions.get('window');
-    const containerSizing = { width, height };
-    const cardSizing = {
-      height: height - 2 * OVERFLOW_VISIBLE,
-      width: width - 2 * (OVERFLOW_VISIBLE + INTER_CARD_SPACING)
-    };
-    const cardStyle = [ cardSizing, styles.card ];
+    const cardStyle = [{ width, height }, styles.card];
     return (
-      <View style={[ containerSizing, styles.container ]}>
+      <View style={styles.container}>
+        <View style={[ styles.header, styles.headerBackground ]}/>
         <ScrollView
           style={styles.scroll}
           horizontal={true}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
           onScroll={this._onScroll}
-          scrollEventThrottle={500}
+          scrollEventThrottle={250}
           ref='scroll'
         >
           {this.state.recipes.map((recipe, i) =>
@@ -58,43 +56,114 @@ class SwipableRecipeCards extends React.Component {
               : <View style={cardStyle} key={recipe.recipeId}/> // Placeholder.
           )}
         </ScrollView>
+        <View style={[ styles.header, styles.headerWithButtons ]}>
+          <Icon.Button
+            style={styles.headerButtonIcon}
+            iconStyle={[
+              styles.headerButtonIcon,
+              this.state.currentIndex === 0 ? styles.headerButtonDisabled : null
+            ]}
+            name='chevron-left'
+            onPress={this._changeIndex.bind(this, -1)}
+            {...buttonStyles}
+          />
+          <View style={styles.headerSpacer}/>
+          <Icon.Button
+            style={styles.headerButton}
+            iconStyle={[
+              styles.headerButtonIcon,
+              this.state.currentIndex === this.state.recipes.length - 1 ? styles.headerButtonDisabled : null
+            ]}
+            name='chevron-right'
+            onPress={this._changeIndex.bind(this, 1)}
+            {...buttonStyles}
+          />
+        </View>
       </View>
     );
   }
 
   componentDidMount() {
+    const { width } = Dimensions.get('window');
     this.refs.scroll.scrollTo({
-      x: this._computePageSize() * this.props.initialIndex,
+      x: width * this.props.initialIndex,
       y: 0,
       animated: false
     });
   }
 
-  _computePageSize() {
-    return Dimensions.get('window').width - 2 * OVERFLOW_VISIBLE;
-  }
-
   _onScroll = (event) => {
+    const { width } = Dimensions.get('window');
     const xOffset = event.nativeEvent.contentOffset.x;
-    const pageSize = this._computePageSize();
-    this.setState({
-      currentIndex: Math.floor((xOffset + pageSize / 2) / pageSize)
-    });
+    const currentIndex = Math.floor((xOffset + width / 2) / width);
+    if (currentIndex >= 0 && currentIndex < this.state.recipes.length) {
+      this.setState({ currentIndex });
+    }
+  };
+
+  _changeIndex = (indexChange) => {
+    const targetIndex = this.state.currentIndex + indexChange;
+    if (targetIndex >= 0 && targetIndex < this.state.recipes.length) {
+      const { width } = Dimensions.get('window');
+      this.refs.scroll.scrollTo({
+        x: width * targetIndex,
+        y: 0,
+        animated: true
+      });
+    }
   };
 }
 
+const buttonStyles = {
+  color: '#eee',
+  backgroundColor: 'transparent',
+  borderRadius: 0
+};
+
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 10,
-    paddingHorizontal: OVERFLOW_VISIBLE
+    flex: 1
+  },
+  header: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    height: 44
+  },
+  headerBackground: {
+    backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
+  },
+  headerWithButtons: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  headerButton: {
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerButtonDisabled: {
+    color: '#999'
+  },
+  headerButtonIcon: {
+    marginRight: 0
+  },
+  headerSpacer: {
+    flex: 1
+  },
+  recipeTitle: {
+    fontFamily: DEFAULT_SERIF_FONT_FAMILY,
+    fontSize: 20,
+    color: '#eee'
   },
   scroll: {
-    flex: 1,
-    overflow: 'visible'
+    flex: 1
   },
   card: {
-    overflow: 'hidden',
-    marginHorizontal: INTER_CARD_SPACING
+    overflow: 'hidden'
   }
 });
 
