@@ -40,7 +40,7 @@ class SwipableRecipeCards extends React.Component {
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
           onScroll={this._onScroll}
-          scrollEventThrottle={100}
+          scrollEventThrottle={250}
           ref='scroll'
         >
           {this.state.recipes.map((recipe, i) =>
