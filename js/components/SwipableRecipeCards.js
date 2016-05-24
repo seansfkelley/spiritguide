@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, ScrollView, Text, StyleSheet, Dimensions } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import PureRender from 'pure-render-decorator';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -32,7 +33,7 @@ class SwipableRecipeCards extends React.Component {
     const cardStyle = [{ width }, styles.card];
     return (
       <View style={styles.container}>
-        <View style={styles.header}/>
+        <View style={[ styles.header, styles.headerBackground ]}/>
         <ScrollView
           style={styles.scroll}
           horizontal={true}
@@ -55,6 +56,29 @@ class SwipableRecipeCards extends React.Component {
               : <View style={cardStyle} key={recipe.recipeId}/> // Placeholder.
           )}
         </ScrollView>
+        <View style={[ styles.header, styles.headerWithButtons ]}>
+          <Icon.Button
+            style={styles.headerButtonIcon}
+            iconStyle={[
+              styles.headerButtonIcon,
+              this.state.currentIndex === 0 ? styles.headerButtonDisabled : null
+            ]}
+            name='chevron-left'
+            onPress={this._goLeft}
+            {...buttonStyles}
+          />
+          <View style={styles.headerSpacer}/>
+          <Icon.Button
+            style={styles.headerButton}
+            iconStyle={[
+              styles.headerButtonIcon,
+              this.state.currentIndex === this.state.recipes.length - 1 ? styles.headerButtonDisabled : null
+            ]}
+            name='chevron-right'
+            onPress={this._goRight}
+            {...buttonStyles}
+          />
+        </View>
       </View>
     );
   }
@@ -75,7 +99,31 @@ class SwipableRecipeCards extends React.Component {
       currentIndex: Math.floor((xOffset + width / 2) / width)
     });
   };
+
+  _goLeft = () => {
+    const { width } = Dimensions.get('window');
+    this.refs.scroll.scrollTo({
+      x: width * (this.state.currentIndex - 1),
+      y: 0,
+      animated: true
+    });
+  };
+
+  _goRight = () => {
+    const { width } = Dimensions.get('window');
+    this.refs.scroll.scrollTo({
+      x: width * (this.state.currentIndex + 1),
+      y: 0,
+      animated: true
+    });
+  };
 }
+
+const buttonStyles = {
+  color: '#eee',
+  backgroundColor: 'transparent',
+  borderRadius: 0
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -86,8 +134,30 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-    height: 44,
+    height: 44
+  },
+  headerBackground: {
     backgroundColor: IOS_STATUS_BAR_BACKGROUND_COLOR
+  },
+  headerWithButtons: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  headerButton: {
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerButtonDisabled: {
+    color: '#999'
+  },
+  headerButtonIcon: {
+    marginRight: 0
+  },
+  headerSpacer: {
+    flex: 1
   },
   recipeTitle: {
     fontFamily: DEFAULT_SERIF_FONT_FAMILY,
