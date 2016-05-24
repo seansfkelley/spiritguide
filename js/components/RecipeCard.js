@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import PureRender from 'pure-render-decorator';
 
 import { shallowEqualHasChanged } from './util/listViewDataSourceUtils';
-import { recipe } from './propTypes';
+import { recipe, ingredientSplits } from './propTypes';
 import {
   DEFAULT_SERIF_FONT_FAMILY,
   DEFAULT_SANS_SERIF_FONT_FAMILY,
@@ -14,10 +14,34 @@ import {
 import MeasuredIngredient from './MeasuredIngredient';
 import InstructionStep from './InstructionStep';
 
+const ORDERED_INGREDIENT_CATEGORIES = [
+  {
+    key: 'missing',
+    getProps: (ingredient) => ({
+      ingredient,
+      isMissing: true,
+      difficulty: null
+    })
+  }, {
+    key: 'substitute',
+    getProps: ({ have, need }) => ({
+      ingredient: need,
+      isSubstituted: true,
+      displaySubstitutes: have
+    })
+  }, {
+    key: 'available',
+    getProps: (ingredient) => ({
+      ingredient
+    })
+  }
+];
+
 @PureRender
 export default class RecipeCard extends React.Component {
   static propTypes = {
     recipe: recipe.isRequired,
+    ingredientSplits: ingredientSplits.isRequired,
     style: View.propTypes.style,
     isFavorited: React.PropTypes.bool.isRequired,
     onFavoriteChange: React.PropTypes.func.isRequired,
@@ -25,13 +49,13 @@ export default class RecipeCard extends React.Component {
   };
 
   state = {
-    dataSources: this._recomputeDataSources(null, this.props.recipe)
+    dataSources: this._recomputeDataSources(null, this.props)
   };
 
-  componentWillReceiveProps(props) {
-    if (this.props.recipe !== props.recipe) {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.recipe !== nextProps.recipe) {
       this.setState({
-        dataSources: this._recomputeDataSources(this.state.dataSources, props.recipe)
+        dataSources: this._recomputeDataSources(this.state.dataSources, nextProps)
       });
     }
   }
@@ -94,13 +118,18 @@ export default class RecipeCard extends React.Component {
     );
   }
 
-  _recomputeDataSources(dataSources, recipe) {
+  _recomputeDataSources(dataSources, props) {
+    const { recipe, ingredientSplits } = props;
     const { ingredients, instructions } = (dataSources || {});
+
+    const mungedIngredients = _.flatMap(ORDERED_INGREDIENT_CATEGORIES, ({ key, getProps }) => {
+      return ingredientSplits[key].map(getProps);
+    });
 
     return {
       ingredients: (ingredients || new ListView.DataSource({
         rowHasChanged: shallowEqualHasChanged
-      })).cloneWithRows(recipe.ingredients),
+      })).cloneWithRows(mungedIngredients),
       instructions: (instructions || new ListView.DataSource({
         rowHasChanged: shallowEqualHasChanged
       })).cloneWithRows(recipe.instructions.split('\n').filter(_.identity))
@@ -110,7 +139,7 @@ export default class RecipeCard extends React.Component {
   _renderIngredientRow = (rowData, sectionId, rowId) => {
     return (
       <MeasuredIngredient
-        ingredient={rowData}
+        {...rowData}
         style={[
           { backgroundColor: +rowId % 2 ? '#ddd' : '#eee'},
           styles.ingredientRow

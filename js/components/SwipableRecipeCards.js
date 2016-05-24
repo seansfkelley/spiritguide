@@ -9,18 +9,21 @@ import {
   DEFAULT_SERIF_FONT_FAMILY,
   IOS_STATUS_BAR_BACKGROUND_COLOR
 } from './constants';
-import { recipe } from './propTypes';
+import { recipe, ingredientSplits } from './propTypes';
 import RecipeCard from './RecipeCard';
-import { selectFavoritedRecipeIds } from '../store/selectors';
+import {
+  selectFavoritedRecipeIds,
+  selectIngredientSplitsByRecipeId
+} from '../store/selectors';
 import * as recipeActions from '../store/actions/recipeActions';
 
-// TODO: Replace this with horizontal ListView.
 @PureRender
 class SwipableRecipeCards extends React.Component {
   static propTypes = {
     initialRecipes: React.PropTypes.arrayOf(recipe).isRequired,
     initialIndex: React.PropTypes.number.isRequired,
-    favoritedRecipeIds: React.PropTypes.arrayOf(React.PropTypes.string).isRequired
+    favoritedRecipeIds: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    ingredientSplitsByRecipeId: React.PropTypes.objectOf(ingredientSplits).isRequired
   };
 
   state = {
@@ -47,6 +50,7 @@ class SwipableRecipeCards extends React.Component {
             Math.abs(i - this.state.currentIndex) <= 2
               ? <RecipeCard
                   recipe={recipe}
+                  ingredientSplits={this.props.ingredientSplitsByRecipeId[recipe.recipeId]}
                   style={cardStyle}
                   key={recipe.recipeId}
                   isFavorited={this.props.favoritedRecipeIds.indexOf(recipe.recipeId) !== -1}
@@ -169,7 +173,8 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    favoritedRecipeIds: selectFavoritedRecipeIds(state)
+    favoritedRecipeIds: selectFavoritedRecipeIds(state),
+    ingredientSplitsByRecipeId: selectIngredientSplitsByRecipeId(state)
   };
 }
 

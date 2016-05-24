@@ -29,6 +29,15 @@ export const measuredIngredient = shape({
   tag: string
 });
 
+export const ingredientSplits = shape({
+  missing: arrayOf(measuredIngredient).isRequired,
+  substitute: arrayOf(shape({
+    need: measuredIngredient.isRequired,
+    have: arrayOf(string).isRequired
+  })).isRequired,
+  available: arrayOf(measuredIngredient).isRequired
+});
+
 export const recipe = shape({
   recipeId: string.isRequired,
   name: string.isRequired,

@@ -26,7 +26,7 @@ export const selectAlphabeticalRecipes = createSelector(
   (recipeIds, recipesById) => _.chain(recipesById).pick(recipeIds).values().sortBy('sortName').value()
 );
 
-export const _selectIngredientSplitsByRecipeId = createSelector(
+export const selectIngredientSplitsByRecipeId = createSelector(
   selectAlphabeticalRecipes,
   selectIngredientsByTag,
   selectSelectedIngredientTags,
@@ -88,7 +88,7 @@ export const _selectCreateRecipeSearchTermFilterer = createSelector(
 export const _selectCreateRecipeListFilterer = createSelector(
   selectSelectedRecipeList,
   selectFavoritedRecipeIds,
-  _selectIngredientSplitsByRecipeId,
+  selectIngredientSplitsByRecipeId,
   (selectedRecipeList, favoritedRecipeIds, ingredientSplitsByRecipeId) => {
     switch (selectedRecipeList) {
       // TODO: Use a real enumeration.
